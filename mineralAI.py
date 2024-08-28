@@ -1,236 +1,40 @@
-from sklearn.decomposition import PCA, KernelPCA
-import xlrd
+import customtkinter as ctk
+import tkinter as tk
+from tkinter import ttk, scrolledtext, IntVar, Menu
+from tkinter import *
+from tkinter import filedialog as fd
+from customtkinter import CTkImage
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-import ipywidgets 
-from ipywidgets import interact, IntSlider
-import ipywidgets as widgets
-from matplotlib import pyplot
-from IPython.display import display, clear_output, Javascript
-from matplotlib.colors import LinearSegmentedColormap
-from sklearn.preprocessing import FunctionTransformer
-from matplotlib.legend import DraggableLegend, Legend
-import matplotlib
-
-from sklearn.cluster import KMeans
-from scipy.spatial import Voronoi, voronoi_plot_2d
-from sklearn.pipeline import Pipeline
-from sklearn.pipeline import make_pipeline
-import gc
-import psutil
-
-
-import customtkinter as ctk
-import tkinter as tk
-from tkinter import ttk, scrolledtext
-from tkinter import filedialog as fd
-from tkinter import *
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from tkinter import IntVar
-from tkinter import Menu
-import matplotlib.gridspec as gridspec
-from tkinter import filedialog as fd, simpledialog
 from matplotlib.backend_bases import MouseButton
-import re
+from matplotlib.lines import Line2D
+
+from sklearn.decomposition import PCA, KernelPCA
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler, FunctionTransformer
+from sklearn.cluster import KMeans
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cluster import AgglomerativeClustering, DBSCAN, SpectralClustering, MeanShift, AffinityPropagation, AgglomerativeClustering, Birch
+from sklearn.mixture import GaussianMixture
 from yellowbrick.cluster import KElbowVisualizer  
+
+import re
 from PIL import Image, ImageTk
 from tktooltip import ToolTip
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
-
-from sklearn.cluster import AgglomerativeClustering, DBSCAN, SpectralClustering, MeanShift, AffinityPropagation, AgglomerativeClustering, Birch, OPTICS
-from sklearn.mixture import GaussianMixture
 import webbrowser
-from customtkinter import CTkImage
 
-import threading
-import code
-import sys
-import io
-from matplotlib.lines import Line2D
 from typing import Union, Callable
 
-
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import LinearSVC
-
-class TerminalApp:
-    def __init__(self, text_widget, main_app):
-        # Use the passed text widget for terminal I/O
-        self.terminal_text = text_widget
-        self.main_app = main_app  # Reference to the main app
-
-        # Enable copy functionality
-        self.enable_copy()
-        
-        # Create a variable to store command history
-        self.command_history = []
-        self.history_index = -1
-
-        # Create an interactive interpreter
-        self.interpreter = code.InteractiveInterpreter(locals=self.get_scope())
-
-        # Redirect stdout and stderr after interpreter is set
-        sys.stdout = self
-        sys.stderr = self
-
-        # Insert initial prompt
-        self.prompt()
-
-        # Bind Enter and KeyPress events
-        self.terminal_text.bind("<Return>", self.enter_command)
-        self.terminal_text.bind("<KeyPress>", self.on_key_press)
-
-    def enable_copy(self):
-        self.terminal_text.bind("<Control-c>", self.copy_text)
-        self.terminal_text.bind("<Command-c>", self.copy_text)
-    
-    def copy_text(self, event):
-        try:
-            # Get the selected text
-            selected_text = self.terminal_text.selection_get()
-            
-            # Copy it to the clipboard
-            self.terminal_text.clipboard_clear()
-            self.terminal_text.clipboard_append(selected_text)
-        except tk.TclError:
-            # If no text is selected, don't do anything
-            pass
-
-
-    def get_scope(self):
-        # Combine globals, instance attributes, and main app attributes
-        scope = globals().copy()
-        scope.update(self.__dict__)
-        scope.update(self.main_app.__dict__)  # Include main app's attributes
-        scope['self'] = self
-        scope['main_app'] = self.main_app  # Explicitly add main_app to scope
-        return scope
-
-    def update_scope(self):
-        # Ensure interpreter has the latest local variables
-        self.interpreter.locals.update(self.get_scope())
-
-    def __setattr__(self, name, value):
-        super().__setattr__(name, value)
-        if name not in ('interpreter', 'terminal_text', 'command_history', 'history_index', 'main_app') and 'interpreter' in self.__dict__:
-            self.interpreter.locals[name] = value
-
-    def __getattr__(self, name):
-        if 'interpreter' in self.__dict__ and name in self.interpreter.locals:
-            return self.interpreter.locals[name]
-        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
-
-    def write(self, message):
-        # Use after to ensure this runs on the main thread
-        self.terminal_text.after(0, self.terminal_text.insert, tk.END, message)
-        self.terminal_text.after(0, self.terminal_text.see, tk.END)
-    
-        # Ensure that the terminal widget scrolls to the end
-        self.terminal_text.after(0, self.terminal_text.see, tk.END)
-
-
-    def flush(self):
-        pass
-
-    def prompt(self):
-        self.write(">>")
-        self.terminal_text.mark_set("insert", tk.END)
-        self.terminal_text.see(tk.END)
-
-    def enter_command(self, event):
-        command = self.get_command()
-        if command.strip():
-            self.terminal_text.insert(tk.END, "\n")
-            self.command_history.append(command)
-            self.history_index = -1
-            self.execute_command(command)
-        return "break"
-
-    def get_command(self):
-        # Get the line where the command was entered
-        line_start_index = self.terminal_text.index("insert linestart")
-        line_end_index = self.terminal_text.index("insert lineend")
-        command = self.terminal_text.get(line_start_index, line_end_index).strip()
-    
-        # Remove the prompt ('>>') from the command
-        if command.startswith(">>"):
-            command = command[2:].strip()
-    
-        print(f"Command extracted: {command}")
-        return command
-
-
-    def execute_command(self, command):
-        threading.Thread(target=self.run_command, args=(command,)).start()
-
-        
-    def run_command(self, command):
-        try:
-            self.update_scope()  # Ensure interpreter has the latest local variables
-    
-            # Compile the command into a code object
-            code_obj = compile(command, '<input>', 'exec')
-    
-            try:
-                # Execute the compiled code object
-                exec(code_obj, self.interpreter.locals)
-            except Exception as e:
-                # Catch exceptions during the execution and print them
-                error_message = traceback.format_exc()
-                self.write(error_message)
-    
-            # If the command is an expression, evaluate and print its result
-            if not command.startswith("print") and command.strip():  # Avoid printing prints and empty commands
-                try:
-                    # Evaluate the expression and print it
-                    result = eval(command, self.interpreter.locals)
-                    if result is not None:
-                        self.write(f"{result}\n")
-                except Exception as e:
-                    pass  # Ignore if it's not an expression
-                    
-        except Exception as e:
-            # Catch any compilation exceptions and print them
-            self.write(f"Error: {str(e)}\n")
-        
-        # Always show the prompt after execution or printing
-        self.prompt()
-
-
-    def on_key_press(self, event):
-        # Disallow editing previous text
-        if self.terminal_text.compare("insert", "<", self.terminal_text.index(tk.END + "-1c linestart")):
-            return "break"
-        
-        # Handle command history navigation
-        if event.keysym == "Up":
-            if self.command_history:
-                self.history_index = max(0, self.history_index - 1)
-                self.replace_command(self.command_history[self.history_index])
-            return "break"
-        elif event.keysym == "Down":
-            if self.command_history:
-                self.history_index = min(len(self.command_history) - 1, self.history_index + 1)
-                self.replace_command(self.command_history[self.history_index])
-            return "break"
-
-    def replace_command(self, command):
-        line_start_index = self.terminal_text.index("insert linestart")
-        line_end_index = self.terminal_text.index("insert lineend")
-        self.terminal_text.delete(line_start_index, line_end_index)
-        self.terminal_text.insert(line_start_index, f">>{command}")
-
-
-
-
+from terminal import TerminalApp
+from pca import PCA_class
 
 
 
@@ -257,18 +61,6 @@ class main(ctk.CTk):
         
         # Set the palette with the system default selection background color
         self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')
-
-        
-        # # Setting ttk widgets to match the light theme
-        # style.theme_use('clam')
-        
-        # style.configure('TButton', background='white', foreground='black', borderwidth=1)
-        # style.map('TButton', background=[('active', 'lightgray')])
-    
-        # style.configure('TLabel', background='white', foreground='black')
-        # style.configure('TFrame', background='white')
-        # style.configure('TEntry', fieldbackground='white', foreground='black')
-        # style.configure('TCombobox', fieldbackground='white', background='white', foreground='black')
 
     
     def create_widgets(self):    
@@ -331,7 +123,7 @@ class main(ctk.CTk):
         menubar.add_cascade(label="File", menu=self.filemenu)
         
         self.editmenu = Menu(menubar, tearoff=0)
-        self.editmenu.add_command(label="Edit Colors", command=self.open_color_window, state="disabled")
+        self.editmenu.add_command(label="Edit Data Point Color/Shape", command=self.open_color_window, state="disabled")
 
         menubar.add_cascade(label="Edit", menu=self.editmenu)
         
@@ -443,10 +235,10 @@ class main(ctk.CTk):
 
         # Apply Button to save the changes
         apply_button = ctk.CTkButton(color_window, text="Apply Colors", command=self.apply_color_change)
-        apply_button.grid(row=max(len(self.lithologies), len(ds['Shape'].unique())) + 2, column=0, columnspan=6, stick = "ew", padx=10, pady=(10,0))
+        apply_button.grid(row=max(len(self.lithologies), len(ds['Shape'].unique())) + 2, column=0, columnspan=7, stick = "ew", padx=10, pady=(10,0))
 
         label = ctk.CTkLabel(color_window, text="Redraw graphs to apply change")
-        label.grid(row=max(len(self.lithologies), len(ds['Shape'].unique())) + 3, column=0, columnspan=6, stick = "ew", padx=10, pady=(0,10))
+        label.grid(row=max(len(self.lithologies), len(ds['Shape'].unique())) + 3, column=0, columnspan=7, stick = "ew", padx=10, pady=(0,10))
         
     def update_color_visual(self, selected_value, lithology, color_visual):
         # Declare dc as global to access the global dataframe
@@ -585,7 +377,7 @@ class main(ctk.CTk):
         self.kernel_combo.set("linear")
 
         self.apply_button = ctk.CTkButton(self.selection_frame, text="Apply", command= self.filter_dataframe)
-        self.apply_button.grid(row=11, column=0, columnspan=4, padx=5, pady=0)
+        self.apply_button.grid(row=11, column=0, columnspan=4, padx=5, pady=(0,5))
 
         self.kernel_param()
 
@@ -889,7 +681,7 @@ class main(ctk.CTk):
             #self.output_text.insert("end", f"PCA Components:\n{self.pca_instance.pca_df.head()}\n")
             self.color_function()
             self.shape_map()
-            self.editmenu.entryconfig("Edit Colors", state="normal")
+            self.editmenu.entryconfig("Edit Data Point Color/Shape", state="normal")
             self.expand_buttons()
             self.loading_graph()   
             
@@ -1116,7 +908,7 @@ class main(ctk.CTk):
         else:
             print("Column Sample ID not in data frame, sample bar graph, and drill hole plot not avaliable")
             
-            pil_image = Image.open("images program/blank.png")
+            pil_image = Image.open("mineralAI_images/images_program/blank.png")
             self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
     
             self.image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
@@ -1174,7 +966,7 @@ class supervised_learning():
 
     def graph_icon(self):
         # Create button for displaying PC bar graph
-        pil_image = Image.open("images program/ml.png")
+        pil_image = Image.open("mineralAI_images/images_program/ml.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
@@ -1588,78 +1380,6 @@ class SharedContainer:
 
 
 
-class PCA_class:
-    def __init__(self, df, scaler_combo, pca_type_combo, output_text, slider, kernel_combo, gamma, degree, coef):
-        # Initialize the PCA class with necessary parameters and perform PCA
-        self.df = df
-        self.gamma = gamma
-        self.degree = degree
-        self.coef = coef
-        self.scaler_combo = scaler_combo
-        self.pca_type_combo = pca_type_combo
-        self.kernel_combo = kernel_combo
-        self.output_text = output_text
-        self.slider = slider
-        self.perform_pca()
-        self.bargraph_frame = None
-
-    def perform_pca(self):
-        # Perform scaling and PCA based on selected options
-        if self.scaler_combo.get() == "Standard Scaler":
-            scaling = StandardScaler()
-        elif self.scaler_combo.get() == "Logarithmic Scaler":
-            scaling = FunctionTransformer(np.log10, validate=True)
-        try:
-            scaling.fit(self.df)
-            self.Scaled_data = scaling.transform(self.df)
-            Scaled_df = pd.DataFrame(self.Scaled_data)
-            
-            pca_type = self.pca_type_combo.get()
-            kernel_type = self.kernel_combo.get()
-            if pca_type == "PCA":
-                self.pca = PCA(n_components=int(self.slider.get()))
-            elif pca_type == "Kernel PCA":
-                self.pca = KernelPCA(n_components=int(self.slider.get()), kernel=kernel_type, gamma=self.gamma, degree=self.degree, coef0=self.coef)
-            else:
-                raise ValueError("Invalid PCA type selected")
-                
-            self.pca.fit(self.Scaled_data)
-            self.x = self.pca.transform(self.Scaled_data)
-    
-            self.create_pca_df()
-         
-        except Exception as e:
-            raise ValueError(f'Not enough components for PCA. Please select more!{e}') from e
-
-    def create_pca_df(self):  
-        # Create a DataFrame for the PCA results
-        if isinstance(self.pca, PCA):
-            num_components = self.pca.n_components_
-        elif isinstance(self.pca, KernelPCA):
-            num_components = self.pca.n_components
-        
-        self.pca_df = pd.DataFrame(
-            data=self.x, 
-            columns=['PC'+str(i) for i in range(1, num_components+1)]
-        )
-        self.scale_pca()
-        
-    def scale_pca(self):
-        # Scale the PCA results
-        self.pca_df_scaled = self.pca_df.copy()
-        scaler_df = self.pca_df[self.pca_df.columns]
-        scaler = 1 / (scaler_df.max() - scaler_df.min())
-        for index in scaler.index:
-            self.pca_df_scaled[index] *= scaler[index]
-    
-    def get_variance_ratio(self):
-        # Output the explained variance ratio for each principal component
-        if isinstance(self.pca, PCA) and hasattr(self.pca, 'explained_variance_ratio_'):
-            explained_variance_ratio = self.pca.explained_variance_ratio_
-            for i, variance in enumerate(explained_variance_ratio, start=1):
-                self.output_text.insert("end", f'Principal Component {i}: \n{variance:.2%} of variance\n')
-        else:
-            self.output_text.insert("end", "Kernel PCA does not provide explained variance ratio.\n")
 
 
 
@@ -1684,7 +1404,7 @@ class loading_class:
 
     def Graph_PC(self):
         # Create button for displaying PC bar graph
-        pil_image = Image.open("images program/element-svgrepo-com.png")
+        pil_image = Image.open("mineralAI_images/images_program/element-svgrepo-com.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
@@ -1861,7 +1581,7 @@ class loading_cluster:
 
     def plot_cluster(self):
         # Create button for displaying cluster bar graph
-        pil_image = Image.open("images program/ele.png")
+        pil_image = Image.open("mineralAI_images/images_program/ele.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
@@ -2263,7 +1983,7 @@ class sample_class:
 
     def Graph_PCA(self):
         # Create button for displaying PC bar graph by samples
-        pil_image = Image.open("images program/sample-screen-svgrepo-com.png")
+        pil_image = Image.open("mineralAI_images/images_program/sample-screen-svgrepo-com.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
@@ -2391,7 +2111,7 @@ class sample_cluster:
     
     def plot_cluster(self):
         # Create button for displaying cluster bar graph by samples
-        pil_image = Image.open("images program/id.png")
+        pil_image = Image.open("mineralAI_images/images_program/id.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
@@ -2775,7 +2495,7 @@ class threed_class:
 
     def plot_3d(self):
         # Create button for displaying 3D PCA biplot
-        pil_image = Image.open("images program/cube-3d-svgrepo-com.png")
+        pil_image = Image.open("mineralAI_images/images_program/cube-3d-svgrepo-com.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
@@ -3278,7 +2998,7 @@ class twod_class:
 
     def plot_2d(self):
         # Load and display the 2D plot icon button
-        pil_image = Image.open("images program/chart-scatterplot-svgrepo-com.png")
+        pil_image = Image.open("mineralAI_images/images_program/chart-scatterplot-svgrepo-com.png")
         resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = ImageTk.PhotoImage(resized_image)
         
@@ -3306,13 +3026,13 @@ class twod_class:
         ctk.CTkLabel(self.box_frame_sub, text="Select PC1:").pack(side="top", padx=5, pady=(5, 0))
         self.pc1_combo = ttk.Combobox(self.box_frame_sub, values=pc_options, state="readonly")
         self.pc1_combo.current(0)
-        self.pc1_combo.pack(side="top", padx=5, pady=(5, 0))
+        self.pc1_combo.pack(side="top", padx=5, pady=(3, 0))
         
         # Dropdown for selecting the second principal component
         ctk.CTkLabel(self.box_frame_sub, text="Select PC2:").pack(side="top", padx=5, pady=(5, 0))
         self.pc2_combo = ttk.Combobox(self.box_frame_sub, values=pc_options, state="readonly")
         self.pc2_combo.current(1)
-        self.pc2_combo.pack(side="top", padx=5, pady=(5, 0))
+        self.pc2_combo.pack(side="top", padx=5, pady=(3, 0))
         
         #select element for data point size
         ctk.CTkLabel(self.box_frame_sub, text="Element for Data Point Size:").pack(side="top", padx=5, pady=(5, 0))
@@ -3846,7 +3566,7 @@ class Cluster2DPlotClass:
 
     def plot_2d_cluster(self):
         # Load and display the 2D cluster plot icon button
-        pil_image = Image.open("images program/2d.png")
+        pil_image = Image.open("mineralAI_images/images_program/2d.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         print(pil_image)
@@ -4571,7 +4291,7 @@ class Cluster3DPlotClass:
 
     def plot_3d_cluster(self):
         # Load and resize the image for the 3D plot button
-        pil_image = Image.open("images program/3d.png")
+        pil_image = Image.open("mineralAI_images/images_program/3d.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create a label with the icon and bind a click event to it
@@ -5306,7 +5026,7 @@ class drill_class:
 
     def Graph_PCA(self):
         # Load and resize the image for the button icon
-        pil_image = Image.open("images program/drill-svgrepo-com.png")
+        pil_image = Image.open("mineralAI_images/images_program/drill-svgrepo-com.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         # Create a label with the icon and bind a click event to it
@@ -5439,7 +5159,7 @@ class drill_class:
 
 
     # def Graph_PCA(self):
-    #     pil_image = Image.open("images program/drill-svgrepo-com.png")
+    #     pil_image = Image.open("mineralAI_images/images_program/drill-svgrepo-com.png")
     #     #resized_image = pil_image.resize((32, 32), Image.LANCZOS)
     #     self.icon_image = ctk.CTkImage(light_image=pil_image, size=(32, 32))
     #     #self.icon_image = ImageTk.PhotoImage(resized_image)
@@ -5454,7 +5174,7 @@ class drill_class:
     #     # #self.graph_bar_button = ctk.CTkButton(self.box_frame, text="Drill PC graph", command=lambda: self.on_button_click(self.graph_bar_button, self.Graph_PCA_sub))
 
         
-    # #     self.icon_image = Image.open("images program/chart-scatter-3d-svgrepo-com.png")
+    # #     self.icon_image = Image.open("mineralAI_images/images_program/chart-scatter-3d-svgrepo-com.png")
     # #     print(self.icon_image)
     # #     self.ctk_icon_image = ctk.CTkImage(light_image=self.icon_image, size=(24, 24))
     # #     print(self.ctk_icon_image)
