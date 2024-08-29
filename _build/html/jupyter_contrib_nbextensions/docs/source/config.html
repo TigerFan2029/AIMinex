@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Jupyter configuration files &#8212; MineralAI 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="jupyter-configuration-files">
+<h1>Jupyter configuration files<a class="headerlink" href="#jupyter-configuration-files" title="Permalink to this heading">¶</a></h1>
+<p>Jupyter configuration is based on the <code class="xref py py-mod docutils literal notranslate"><span class="pre">traitlets.config</span></code> module.
+Essentially, each Jupyter application (e.g. <code class="xref py py-mod docutils literal notranslate"><span class="pre">notebook</span></code>, or
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">nbconvert</span></code>) has a number of configurable values which:</p>
+<ol class="arabic simple">
+<li><p>have default values</p></li>
+<li><p>can be altered form their default by values read from configuration files,
+which can be
+a) <code class="docutils literal notranslate"><span class="pre">.json</span></code> static files
+b) <code class="docutils literal notranslate"><span class="pre">.py</span></code> config python scripts</p></li>
+<li><p>can be overridden by command-line arguments</p></li>
+</ol>
+<section id="jupyter-config-path">
+<span id="id1"></span><h2>Jupyter config path<a class="headerlink" href="#jupyter-config-path" title="Permalink to this heading">¶</a></h2>
+<p>Jupyter applications search for configuration files in each directory in the
+<em>jupyter config path</em>. This path includes different locations in different
+operating systems, but you can use the root jupyter command to find a list of
+all jupyter paths, and look for the config section:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="o">--</span><span class="n">paths</span>
+</pre></div>
+</div>
+<p>There are at least three configuration directories</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>a per-user directory</p></li>
+<li><p>a directory in the <code class="docutils literal notranslate"><span class="pre">sys.prefix</span></code> directory for the python installation in
+use</p></li>
+<li><p>a system-wide directory</p></li>
+</ol>
+</div></blockquote>
+<p>Note that it is likely that to write to the system-wide config directory will
+require elevated (admin) privileges. This may also be true for the sys-prefix
+directory, depending on the python installation in use.</p>
+<p>Finally, you can also specify a configuration file as a command line argument,
+for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">config</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">john</span><span class="o">/</span><span class="n">mystuff</span><span class="o">/</span><span class="n">jupyter_notebook_config</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>Note that this can change which filenames are searched for, as noted below.</p>
+</section>
+<section id="jupyter-configuration-filenames">
+<span id="jupyter-config-filenames"></span><h2>Jupyter configuration filenames<a class="headerlink" href="#jupyter-configuration-filenames" title="Permalink to this heading">¶</a></h2>
+<p>Jupyter applications search the <a class="reference internal" href="#jupyter-config-path"><span class="std std-ref">Jupyter config path</span></a> for config files
+with names derived from the application name, with file extension of either
+<code class="docutils literal notranslate"><span class="pre">.json</span></code> (loaded as json) or <code class="docutils literal notranslate"><span class="pre">.py</span></code> (run as a python script).
+For example, the <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code> application searches for config files
+called <code class="docutils literal notranslate"><span class="pre">jupyter_notebook_config</span></code>, while the <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">nbconvert</span></code> application
+searches for config files named <code class="docutils literal notranslate"><span class="pre">jupyter_nbconvert_config</span></code>, with the file
+extensions mentioned above.
+In addition, all jupyter applications will load config files named
+<code class="docutils literal notranslate"><span class="pre">jupyter_config.json</span></code> or <code class="docutils literal notranslate"><span class="pre">jupyter_config.py</span></code>.</p>
+<p>Specifying a config file on the command line has the additional slightly subtle
+effect that it will also change the filename that the application searches for.
+For example, if I call the notebook using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">--</span><span class="n">config</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">john</span><span class="o">/</span><span class="n">mystuff</span><span class="o">/</span><span class="n">special_config_ftw</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>then instead of searching the <a class="reference internal" href="#jupyter-config-path"><span class="std std-ref">Jupyter config path</span></a> for files named
+<code class="docutils literal notranslate"><span class="pre">jupyter_notebook_config</span></code>, the notebook application will search the config
+path for other files also named <code class="docutils literal notranslate"><span class="pre">special_config_ftw</span></code>, which can mean that the
+normal config files get missed. As a result, it may be preferable to name any
+custom config files with the standard filename for the jupyter application they
+pertain to.</p>
+</section>
+<section id="config-files-edited-by-jupyter-contrib-nbextensions">
+<span id="jupyter-contrib-nbextensions-config-edits"></span><h2>Config files edited by jupyter_contrib_nbextensions<a class="headerlink" href="#config-files-edited-by-jupyter-contrib-nbextensions" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">contrib</span> <span class="pre">nbextensions</span> <span class="pre">install</span></code> command edits some config files as
+part of the install:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">jupyter_notebook_config.json</span></code> is edited in order to:</dt><dd><ul>
+<li><p>enable the
+<a class="reference external" href="https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator">jupyter_nbextensions_configurator</a>.
+serverextension</p></li>
+<li><p>enable the <code class="docutils literal notranslate"><span class="pre">contrib_nbextensions_help_item</span></code> nbextension, which adds
+a link to readthedocs to the help menu</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">jupyter_nbconvert_config.json</span></code> is edited in order to:</dt><dd><ul>
+<li><p>edit the nbconvert template path, adding the
+<code class="docutils literal notranslate"><span class="pre">jupyter_contrib_nbextensions.nbconvert_support</span></code> templates directory</p></li>
+<li><p>add preprocessors <code class="docutils literal notranslate"><span class="pre">CodeFoldingPreprocessor</span></code> and
+<code class="docutils literal notranslate"><span class="pre">PyMarkdownPreprocessor</span></code> from the
+<code class="docutils literal notranslate"><span class="pre">jupyter_contrib_nbextensions.nbconvert_support</span></code> module</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">MineralAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../step_guide.html">Program Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../new_content.html">Setting Up Excel Spreadsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Using_Navigation_Bar.html">Using Navigation Bar</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Common Questions:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../saving_figure.html">How to Save High-Quality Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../yellowbrick.html">What is Distortion Score Elbow?</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Hom Nath Gharti, Tiger Fan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/jupyter_contrib_nbextensions/docs/source/config.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
