@@ -1,0 +1,1 @@
+Editing Color and Shapes associated with different columns.

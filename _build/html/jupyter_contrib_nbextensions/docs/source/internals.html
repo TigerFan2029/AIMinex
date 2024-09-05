@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Notebook extension structure &#8212; MineralAI 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-jupyter_contrib_nbextensions.nbconvert_support"></span><section id="notebook-extension-structure">
+<h1>Notebook extension structure<a class="headerlink" href="#notebook-extension-structure" title="Permalink to this heading">¶</a></h1>
+<p>The nbextensions are stored in the repository each as a separate subdirectory of
+<cite>src/jupyter_contrib_nbextensions/nbextensions</cite>.</p>
+<p>Each notebook extension typically has its own directory named after the extension, containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>thisextension/thisextension.js</cite> - javascript implementing the nbextension</p></li>
+<li><p><cite>thisextension/thisextension.yml</cite> - file describing the nbextension to the <cite>jupyter_nbextensions_configurator</cite> server extension</p></li>
+<li><p><cite>thisextension/thisextension.css</cite> - optional CSS file, which may be loaded by the javascript</p></li>
+<li><p><cite>thisextension/README.md</cite> - readme file describing the nbextension in markdown format</p></li>
+</ul>
+</div></blockquote>
+<p>The file names do not need to have the shown names, they can be chosen freely, as long as they refer to each other using the appropriate names.
+This is an example for the main <cite>thisextension.js</cite> file:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">([</span>
+<span class="w">    </span><span class="s1">&#39;require&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;base/js/namespace&#39;</span><span class="p">,</span>
+<span class="p">],</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="nx">requirejs</span>
+<span class="w">    </span><span class="nx">$</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">Jupyter</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// define default values for config parameters</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">my_config_value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">100</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">initialize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// update params with any specified in the server&#39;s config file.</span>
+<span class="w">        </span><span class="c1">// the &quot;thisextension&quot; value of the Jupyter notebook config&#39;s</span>
+<span class="w">        </span><span class="c1">// data may be undefined, but that&#39;s ok when using JQuery&#39;s extend</span>
+<span class="w">        </span><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="p">,</span><span class="w"> </span><span class="nx">Jupyter</span><span class="p">.</span><span class="nx">notebook</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">thisextension</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// add our extension&#39;s css to the page</span>
+<span class="w">        </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;link/&gt;&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="nx">attr</span><span class="p">({</span>
+<span class="w">                </span><span class="nx">rel</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;stylesheet&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;text/css&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">href</span><span class="o">:</span><span class="w"> </span><span class="nx">requirejs</span><span class="p">.</span><span class="nx">toUrl</span><span class="p">(</span><span class="s1">&#39;./thisextension.css&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">})</span>
+<span class="w">            </span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// The specially-named function load_ipython_extension will be called</span>
+<span class="w">    </span><span class="c1">// by the notebook when the nbextension is to be loaded.</span>
+<span class="w">    </span><span class="c1">// It mustn&#39;t take too long to execute however, or the notebook will</span>
+<span class="w">    </span><span class="c1">// assume an error has occurred.</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">load_ipython_extension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Once the config has been loaded, do everything else.</span>
+<span class="w">        </span><span class="c1">// The loaded object is a javascript Promise object, so the then</span>
+<span class="w">        </span><span class="c1">// call return immediately. See</span>
+<span class="w">        </span><span class="c1">// https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise</span>
+<span class="w">        </span><span class="c1">// for details.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">Jupyter</span><span class="p">.</span><span class="nx">notebook</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaded</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">initialize</span><span class="p">);</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// return object to export public methods</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">load_ipython_extension</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">load_ipython_extension</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>And for the <cite>thisextension.yml</cite> file:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Jupyter Notebook Extension</span>
+<span class="nt">Compatibility</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4.x, 5.x</span>
+<span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This Extension</span>
+<span class="nt">Main</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">thisextension.js</span>
+<span class="nt">Icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icon.png</span>
+<span class="nt">Link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">README.md</span>
+<span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My super duper extension</span>
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">thisextension.my_config_value</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Number of dupers to create</span>
+<span class="w">  </span><span class="nt">input_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span>
+<span class="w">  </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1</span>
+<span class="w">  </span><span class="nt">step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+</pre></div>
+</div>
+<p>For further details on the yaml file format, and the option types supported by the configurator, see the <a class="reference external" href="https://github.com/jupyter-contrib/jupyter_nbextensions_configurator">jupyter_nbextension_configurator repo</a>.</p>
+<p>When supplying a <cite>README.md</cite> file, please supply a main heading with the
+nbextension’s title, as this will be linked in the generated documentation at
+<a class="reference external" href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest">jupyter-contrib-nbextensions.readthedocs.io</a>.
+This is a simple example for a <cite>README.md</cite>:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span><span class="gh">This extension</span>
+<span class="gh">==============</span>
+
+A quick summary of what this nbextension does.
+
+
+<span class="gu">Usage</span>
+<span class="gu">-----</span>
+
+A more detailed description can go here, maybe covering different variations of functionality, differences in versions or for different kernels etc.
+
+![<span class="nt">Screenshot image</span>](<span class="na">screenshot.png</span>)
+
+
+<span class="gu">Options</span>
+<span class="gu">-------</span>
+
+Some description of the different options the nbextension provides, what they do, and their default values
+
+<span class="gu">Internals</span>
+<span class="gu">---------</span>
+
+How this extension works.
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">MineralAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../step_guide.html">Program Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../new_content.html">Setting Up Excel Spreadsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Using_Navigation_Bar.html">Using Navigation Bar</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Common Questions:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../saving_figure.html">How to Save High-Quality Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../yellowbrick.html">What is Distortion Score Elbow?</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Hom Nath Gharti, Tiger Fan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/jupyter_contrib_nbextensions/docs/source/internals.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
