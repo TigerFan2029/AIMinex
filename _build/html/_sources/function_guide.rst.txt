@@ -51,6 +51,7 @@ a) PCA Functions
         | The Drill Hole depth chart displays PC charts with PCA data for each drill hole and their associated samples, ordered in depth. It processes and visualizes the depth data for different drill holes, allowing the user to select a specific drill hole and plot the PCA scatter plots along with the depth chart. 
         .. image:: mineralAI_images/document/dh.png
             :width: 100%  
+        | *column Depth and Drillhole are required for this function
         | 
 
 b) Clustering Function
@@ -68,7 +69,7 @@ b) Clustering Function
         .. image:: mineralAI_images/document/elecbg.png
             :width: 100%    
   2. PC Cluster BarGraph by Samples
-        | The PC Cluster BarGraph by Samples function performs clustering analysis on PCA-transformed data and displays the results as bar graphs by <b>samples</b>. This class supports multiple clustering techniques and uses Yellowbrick to visualize the optimal number of clusters when the number of clusters needs to be manually determined.
+        | The PC Cluster BarGraph by Samples function performs clustering analysis on PCA-transformed data and displays the results as bar graphs by samples. This class supports multiple clustering techniques and uses Yellowbrick to visualize the optimal number of clusters when the number of clusters needs to be manually determined.
         .. image:: mineralAI_images/document/samcbg.png
             :width: 100%  
   3. Cluster 3D Biplot
@@ -79,7 +80,47 @@ b) Clustering Function
         | This class plots a 2D clusterin plot which allows users to select different elements as the axes, apply different clustering algorithms, and visualize the results using meshgrids for background contours.
         .. image:: mineralAI_images/document/2dc.png
             :width: 100%  
+        | 
 
 c) Supervised Learnings
+    .. image:: mineralAI_images/document/supervised_icon.png
+        :width: 100%
+  Supervised learning is a category of machine learning that uses labelled datasets to train algorithms/models to predict outputs and observe patterns; it is commonly used for classification tasks and data predictions. 
 
-also say for which function what columns in df are required
+  1. Supervised Learnings-Data Prediction
+        | The Data Prediction function uses element values as the input (X) data to predict the category (e.g., lithology) that each sample belongs to. This program uses the SVC and Random Forest classifier from the Scikit learn library and incorporates commonly used parameters to enhance performance (for more details, visit `SVC <https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html>`_ or `Random Forest <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html>`_ ). Users can either manually input data or upload an Excel sheet to extract the data from, provided it follows the correct format (see step iiib). *Note: Only columns with specified/inputted values are used for model training.
+
+        | Steps:
+        | i) Select Model
+        .. image:: mineralAI_images/document/spv1.png
+            :width: 100%
+        | ii) Adjust parameters and select the column to predict. (Original Parameters set to default setting)
+        .. image:: mineralAI_images/document/spv2.png
+            :width: 100%
+        | iii)  Input data manually or by importing an Excel Sheet
+
+            a) Manually: Click on the plus button to create new rows for input data
+
+                .. image:: mineralAI_images/document/spv3a.png
+                    :width: 100%
+            \
+            b) Import Excel: Upload an Excel file with the correct format (see below)
+
+                .. image:: mineralAI_images/document/spv3b.png
+                    :width: 100%
+            \
+            Sample Excel Spread-Sheet:
+
+                .. image:: mineralAI_images/document/test.png
+                    :width: 100%
+            \
+        | iv) Input/modify data and predict
+        .. image:: mineralAI_images/document/spv4.png
+            :width: 100%            
+        | v) View prediction at the bottom. Column names that don't match in the original Excel file will be excluded and printed as a warning.
+        .. image:: mineralAI_images/document/spv5.png
+            :width: 100%     
+
+
+
+
