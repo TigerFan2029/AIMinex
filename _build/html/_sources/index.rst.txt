@@ -12,6 +12,7 @@ In the section below you will find detailed explanation to use the program and f
    :maxdepth: 10
    :caption: Contents:
 
+   download
    step_guide
    function_guide
    new_content
@@ -27,7 +28,7 @@ In the section below you will find detailed explanation to use the program and f
    save_excel
    pca
    clustering
-   debugging
+   colornshape
 
 Indices and tables
 ==================

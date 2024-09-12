@@ -16,7 +16,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Setting Up Excel Spreadsheet" href="new_content.html" />
+    <link rel="next" title="Setting Up Excel Sheet" href="new_content.html" />
     <link rel="prev" title="Program Tutorial" href="step_guide.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -114,6 +114,7 @@ For more information on the differences between the PCAs and types of clustering
 </div>
 <a class="reference internal image-reference" href="_images/dh.png"><img alt="_images/dh.png" src="_images/dh.png" style="width: 100%;" /></a>
 <div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">*</span></a>column Depth and Drillhole are required for this function</div>
 <div class="line"><br /></div>
 </div>
 </dd>
@@ -145,7 +146,7 @@ For more information on the different clustering methods and their processing lo
 </li>
 <li><dl>
 <dt>PC Cluster BarGraph by Samples</dt><dd><div class="line-block">
-<div class="line">The PC Cluster BarGraph by Samples function performs clustering analysis on PCA-transformed data and displays the results as bar graphs by &lt;b&gt;samples&lt;/b&gt;. This class supports multiple clustering techniques and uses Yellowbrick to visualize the optimal number of clusters when the number of clusters needs to be manually determined.</div>
+<div class="line">The PC Cluster BarGraph by Samples function performs clustering analysis on PCA-transformed data and displays the results as bar graphs by samples. This class supports multiple clustering techniques and uses Yellowbrick to visualize the optimal number of clusters when the number of clusters needs to be manually determined.</div>
 </div>
 <a class="reference internal image-reference" href="_images/samcbg.png"><img alt="_images/samcbg.png" src="_images/samcbg.png" style="width: 100%;" /></a>
 </dd>
@@ -164,15 +165,71 @@ For more information on the different clustering methods and their processing lo
 <div class="line">This class plots a 2D clusterin plot which allows users to select different elements as the axes, apply different clustering algorithms, and visualize the results using meshgrids for background contours.</div>
 </div>
 <a class="reference internal image-reference" href="_images/2dc.png"><img alt="_images/2dc.png" src="_images/2dc.png" style="width: 100%;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
 </dd>
 </dl>
 </li>
 </ol>
 </div></blockquote>
-<ol class="loweralpha simple" start="3">
-<li><p>Supervised Learnings</p></li>
+<ol class="loweralpha" start="3">
+<li><dl>
+<dt>Supervised Learnings</dt><dd><a class="reference internal image-reference" href="_images/supervised_icon.png"><img alt="_images/supervised_icon.png" src="_images/supervised_icon.png" style="width: 100%;" /></a>
+</dd>
+</dl>
+</li>
 </ol>
-<p>also say for which function what columns in df are required</p>
+<blockquote>
+<div><p>Supervised learning is a category of machine learning that uses labelled datasets to train algorithms/models to predict outputs and observe patterns; it is commonly used for classification tasks and data predictions.</p>
+<ol class="arabic">
+<li><dl>
+<dt>Supervised Learnings-Data Prediction</dt><dd><div class="line-block">
+<div class="line">The Data Prediction function uses element values as the input (X) data to predict the category (e.g., lithology) that each sample belongs to. This program uses the SVC and Random Forest classifier from the Scikit learn library and incorporates commonly used parameters to enhance performance (for more details, visit <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html">SVC</a> or <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html">Random Forest</a> ). Users can either manually input data or upload an Excel sheet to extract the data from, provided it follows the correct format (see step iiib). <a href="#id3"><span class="problematic" id="id4">*</span></a>Note: Only columns with specified/inputted values are used for model training.</div>
+</div>
+<div class="line-block">
+<div class="line">Steps:</div>
+<div class="line">i) Select Model</div>
+</div>
+<a class="reference internal image-reference" href="_images/spv1.png"><img alt="_images/spv1.png" src="_images/spv1.png" style="width: 100%;" /></a>
+<div class="line-block">
+<div class="line">ii) Adjust parameters and select the column to predict. (Original Parameters set to default setting)</div>
+</div>
+<a class="reference internal image-reference" href="_images/spv2.png"><img alt="_images/spv2.png" src="_images/spv2.png" style="width: 100%;" /></a>
+<div class="line-block">
+<div class="line">iii)  Input data manually or by importing an Excel Sheet</div>
+</div>
+<blockquote>
+<div><ol class="loweralpha">
+<li><p>Manually: Click on the plus button to create new rows for input data</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/spv3a.png"><img alt="_images/spv3a.png" src="_images/spv3a.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+</ol>
+<p>b) Import Excel: Upload an Excel file with the correct format (see below)</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/spv3b.png"><img alt="_images/spv3b.png" src="_images/spv3b.png" style="width: 100%;" /></a>
+</div></blockquote>
+<p>Sample Excel Spread-Sheet:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/test.png"><img alt="_images/test.png" src="_images/test.png" style="width: 100%;" /></a>
+</div></blockquote>
+<p></p>
+</div></blockquote>
+<div class="line-block">
+<div class="line">iv) Input/modify data and predict</div>
+</div>
+<a class="reference internal image-reference" href="_images/spv4.png"><img alt="_images/spv4.png" src="_images/spv4.png" style="width: 100%;" /></a>
+<div class="line-block">
+<div class="line">v) View prediction at the bottom. Column names that don’t match in the original Excel file will be excluded and printed as a warning.</div>
+</div>
+<a class="reference internal image-reference" href="_images/spv5.png"><img alt="_images/spv5.png" src="_images/spv5.png" style="width: 100%;" /></a>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
 </section>
 
 
@@ -194,9 +251,10 @@ For more information on the different clustering methods and their processing lo
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="download.html">How to Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_guide.html">Program Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functions and Methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new_content.html">Setting Up Excel Spreadsheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new_content.html">Setting Up Excel Sheet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Using_Navigation_Bar.html">Using Navigation Bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
 </ul>
@@ -207,7 +265,7 @@ For more information on the different clustering methods and their processing lo
 <li class="toctree-l1"><a class="reference internal" href="save_excel.html">How to Save Data into Excel File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pca.html">PCA vs KernelPCA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="clustering.html">Types of Clustering Methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="colornshape.html">Modifying Color/Shape options</a></li>
 </ul>
 
 <div class="relations">
@@ -215,7 +273,7 @@ For more information on the different clustering methods and their processing lo
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="step_guide.html" title="previous chapter">Program Tutorial</a></li>
-      <li>Next: <a href="new_content.html" title="next chapter">Setting Up Excel Spreadsheet</a></li>
+      <li>Next: <a href="new_content.html" title="next chapter">Setting Up Excel Sheet</a></li>
   </ul></li>
 </ul>
 </div>
