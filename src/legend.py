@@ -42,23 +42,36 @@ def legend(self):
             total_entries = len(label1) + len(label2)
             height_per_entry = 0.225
             fig_height = total_entries * height_per_entry
+
+            if fig_height < 3:
+                fig_height = 3
             
-            hei = fig_height-(len(label1)*0.3)-0.05
-            print(hei)
             print(f"fig_height{fig_height}")
     
-            figx = plt.figure(figsize=(2.5, fig_height))
+            figx = plt.figure(figsize=(3, fig_height), constrained_layout=True)
             axx = figx.add_subplot(111)
             axx.axis('off')
-    
-            self.legend1 = plt.legend(handle1, label1, bbox_to_anchor=(0, 1.2), loc='upper left', title=self.selected_column, fontsize=10, labelspacing=0.3, bbox_transform=axx.transAxes)
-            self.legend2 = plt.legend(handle2, label2, bbox_to_anchor=(0, hei), loc='upper left', title=column_to_use, fontsize=10, labelspacing=0.3, bbox_transform=axx.transAxes)
+
+            self.legend1 = axx.legend(handle1, label1, loc='upper left', bbox_to_anchor=(0, 1.05), title=self.selected_column, fontsize=10, labelspacing=0.3)
+
+            # Get the bounding box of the first legend in axis coordinates
+            figx.canvas.draw()
+            renderer = figx.canvas.get_renderer()
+            bbox = self.legend1.get_window_extent(renderer=renderer)
+
+            bbox = bbox.transformed(axx.transAxes.inverted())
+
+            second_legend_y = bbox.y0
+
+            self.legend2 = axx.legend(handle2, label2, loc='upper left', bbox_to_anchor=(0, second_legend_y), title=column_to_use, fontsize=10, labelspacing=0.3)
             axx.add_artist(self.legend1)
             axx.add_artist(self.legend2)
+
             self.canvas1 = FigureCanvasTkAgg(figx, master=self.legend_frame)
             toolbar = CustomToolbar(self.canvas1, self.legend_frame)
             toolbar.update()
             toolbar.pack(side=tk.TOP, fill=tk.X)
+
     
             self.canvas1.get_tk_widget().pack(fill="both", expand=True)
     
