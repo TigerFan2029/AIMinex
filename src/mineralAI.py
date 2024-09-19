@@ -93,7 +93,7 @@ class main(ctk.CTk):
         self.left_frame = ctk.CTkFrame(self.paned_window)
         self.paned_window.add(self.left_frame, stretch="always")
 
-        self.right_frame = ctk.CTkFrame(self.paned_window)
+        self.right_frame = ctk.CTkFrame(self.paned_window, width=300)
         self.paned_window.add(self.right_frame, stretch="never")
     
         # Left Frame contents
@@ -108,18 +108,18 @@ class main(ctk.CTk):
         self.box_frame_sub.grid(row=0, column=1, rowspan=4, sticky="ns", pady=5)
         
         self.bargraph_frame = ctk.CTkFrame(self.left_frame, width=600)
-        self.bargraph_frame.grid(row=0, column=2, rowspan=4, sticky="nsew", pady=5, padx=(5,0))
+        self.bargraph_frame.grid(row=0, column=2, rowspan=4, sticky="nsew", pady=5, padx=5)
         
         self.left_frame.grid_columnconfigure(2, weight=1)
         self.left_frame.grid_rowconfigure(2, weight=1)
 
         # Right Frame contents
         self.legend_frame = ctk.CTkScrollableFrame(self.right_frame, width=300)
-        self.legend_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=(5, 0))
+        self.legend_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=5, pady=(5, 0))
         
-        self.output_frame = ctk.CTkFrame(self.right_frame, width=300)
+        self.output_frame = ctk.CTkFrame(self.right_frame, width=300, height=500)
         self.output_frame.pack_propagate(False)
-        self.output_frame.grid(row=1, column=0, rowspan=3, sticky="nsew", padx=5, pady=5)
+        self.output_frame.grid(row=2, column=0, rowspan=3, sticky="nsew", padx=5, pady=5)
 
         self.right_frame.grid_rowconfigure(1, weight=1)
         self.right_frame.grid_columnconfigure(0, weight=1)
