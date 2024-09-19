@@ -12,6 +12,7 @@ def legend(self):
     if Legend:
         for widget in self.legend_frame.winfo_children():
             widget.destroy()
+        
         if not color_change.dc.empty and not color_change.ds.empty:
             unique_lithologies = self.cleaned_df[self.selected_column.strip().lower()].unique()
             
@@ -40,11 +41,11 @@ def legend(self):
                 label2.append(shape)
     
             total_entries = len(label1) + len(label2)
-            height_per_entry = 0.225
-            fig_height = total_entries * height_per_entry
+            height_per_entry = 0.19
+            fig_height = total_entries * height_per_entry + 1
 
-            if fig_height < 3:
-                fig_height = 3
+            if fig_height < 3.15:
+                fig_height = 3.15
             
             print(f"fig_height{fig_height}")
     
@@ -52,7 +53,7 @@ def legend(self):
             axx = figx.add_subplot(111)
             axx.axis('off')
 
-            self.legend1 = axx.legend(handle1, label1, loc='upper left', bbox_to_anchor=(0, 1.05), title=self.selected_column, fontsize=10, labelspacing=0.3)
+            self.legend1 = axx.legend(handle1, label1, loc='upper left', bbox_to_anchor=(0, 1), title=self.selected_column, fontsize=10, labelspacing=0.3)
 
             # Get the bounding box of the first legend in axis coordinates
             figx.canvas.draw()
@@ -71,10 +72,11 @@ def legend(self):
             toolbar = CustomToolbar(self.canvas1, self.legend_frame)
             toolbar.update()
             toolbar.pack(side=tk.TOP, fill=tk.X)
-
     
             self.canvas1.get_tk_widget().pack(fill="both", expand=True)
-    
+            self.legend_frame.update_idletasks()
+            self.legend_frame._parent_canvas.yview_moveto(0)
+
             self.legend1.set_visible(self.var1.get() == 1)
             self.legend2.set_visible(self.var1.get() == 1)
         else:
