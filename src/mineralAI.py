@@ -29,6 +29,7 @@ from twod_biplot import twod_class
 from threed_biplot import threed_class
 from twod_cluster import Cluster2DPlotClass
 from threed_cluster import Cluster3DPlotClass
+from about import show_about
 
 import color_change
 
@@ -184,7 +185,7 @@ class main(ctk.CTk):
         helpmenu.add_command(label="Short-Cuts:", command=None)
         helpmenu.add_command(label="Deselect_all", command=None, accelerator="Cmd+d")
         helpmenu.add_separator()
-        helpmenu.add_command(label="About...", command=None)
+        helpmenu.add_command(label="About...", command=show_about)
         menubar.add_cascade(label="Help", menu=helpmenu)
         self.config(menu=menubar)
         
