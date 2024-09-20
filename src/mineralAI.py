@@ -4,6 +4,7 @@ from tkinter import ttk, scrolledtext, Menu
 from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
+from tkinter import PanedWindow
 
 import pandas as pd
 import numpy as np
@@ -28,6 +29,7 @@ from twod_biplot import twod_class
 from threed_biplot import threed_class
 from twod_cluster import Cluster2DPlotClass
 from threed_cluster import Cluster3DPlotClass
+from about import show_about
 
 import color_change
 
@@ -44,6 +46,7 @@ class main(ctk.CTk):
         
         self.geometry(f"{screen_width}x{screen_height}")
         self.filtered_df = pd.DataFrame()
+        self.box_frame_sub_visible = True
         self.create_widgets()
 
         # Get the system default color for selection background
@@ -56,32 +59,87 @@ class main(ctk.CTk):
         # Set the palette
         self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')
 
+    def toggle_box_frame_sub(self):
+        if self.box_frame_sub_visible:
+            self.box_frame_sub.grid_remove()
+            self.box_frame_sub_visible = False
+            self.toggle_button.configure(text='>')
+        else:
+            self.box_frame_sub.grid()
+            self.box_frame_sub_visible = True
+            self.toggle_button.configure(text='<')
+
+    def update_toggle_button_position(self, event=None):
+        # update button position
+        self.update_idletasks()
+
+        if self.box_frame_sub_visible:
+            x = self.box_frame_sub.winfo_x() + self.box_frame_sub.winfo_width() - (self.toggle_button.winfo_width() // 2.5)
+        else:
+            x = self.selection_frame.winfo_x() + self.selection_frame.winfo_width()
+
+        y = self.winfo_height() // 2 - self.toggle_button.winfo_height() // 2
+
+        self.toggle_button.place(x=x, y=y)
+
     
     def create_widgets(self):
-        # Create the main layout frames
-        self.selection_frame = ctk.CTkFrame(self, height = 250)
+        # Create a PanedWindow
+        self.paned_window = PanedWindow(self, orient='horizontal')
+        self.paned_window.grid(row=0, column=0, sticky="nsew")
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        self.left_frame = ctk.CTkFrame(self.paned_window)
+        self.paned_window.add(self.left_frame, stretch="always")
+
+        self.right_frame = ctk.CTkFrame(self.paned_window, width=300)
+        self.paned_window.add(self.right_frame, stretch="never")
+    
+        # Left Frame contents
+        self.selection_frame = ctk.CTkFrame(self.left_frame, height=250)
         self.selection_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", pady=(5,0), padx=5)
         
-        self.legend_frame = ctk.CTkFrame(self, width=250)
-        self.legend_frame.grid(row=0, column=3, sticky="ns", padx=5, pady=(5,0))
-    
-        self.box_frame = ctk.CTkFrame(self, width=150)
+        self.box_frame = ctk.CTkFrame(self.left_frame, width=150)
         self.box_frame.grid(row=2, column=0, rowspan=2, sticky="nsew", padx=5, pady=5)
-    
-        self.box_frame_sub = ctk.CTkFrame(self, width=200)
+        
+        self.box_frame_sub = ctk.CTkFrame(self.left_frame, width=200)
         self.box_frame_sub.pack_propagate(False)
         self.box_frame_sub.grid(row=0, column=1, rowspan=4, sticky="ns", pady=5)
-    
-        self.bargraph_frame = ctk.CTkFrame(self)
-        self.bargraph_frame.grid(row=0, column=2, rowspan=4, sticky="nsew", pady=5, padx=(5,0))
         
-        self.output_frame = ctk.CTkFrame(self, width=250)
+        self.bargraph_frame = ctk.CTkFrame(self.left_frame, width=600)
+        self.bargraph_frame.grid(row=0, column=2, rowspan=4, sticky="nsew", pady=5, padx=5)
+        
+        self.left_frame.grid_columnconfigure(2, weight=1)
+        self.left_frame.grid_rowconfigure(2, weight=1)
+
+        # Right Frame contents
+        self.legend_frame = ctk.CTkScrollableFrame(self.right_frame, width=300)
+        self.legend_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=5, pady=(5, 0))
+        
+        self.output_frame = ctk.CTkFrame(self.right_frame, width=300, height=500)
         self.output_frame.pack_propagate(False)
-        self.output_frame.grid(row=1, column=3, rowspan=3, sticky="nsew", padx=5, pady=5)
-        
-        self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(2, weight=1)
-        
+        self.output_frame.grid(row=2, column=0, rowspan=3, sticky="nsew", padx=5, pady=5)
+
+        self.right_frame.grid_rowconfigure(1, weight=1)
+        self.right_frame.grid_columnconfigure(0, weight=1)
+
+
+        # Create the toggle button
+        self.toggle_button = ctk.CTkButton(
+            self,
+            text="<",
+            width=20,
+            fg_color='transparent',
+            hover=False,
+            text_color="black",
+            command=self.toggle_box_frame_sub
+        )
+        self.toggle_button.place(x=0, y=0)
+
+        self.bind('<Configure>', self.update_toggle_button_position)
+
         self.output_text = scrolledtext.ScrolledText(
             self.output_frame, 
             wrap="word", 
@@ -127,7 +185,7 @@ class main(ctk.CTk):
         helpmenu.add_command(label="Short-Cuts:", command=None)
         helpmenu.add_command(label="Deselect_all", command=None, accelerator="Cmd+d")
         helpmenu.add_separator()
-        helpmenu.add_command(label="About...", command=None)
+        helpmenu.add_command(label="About...", command=show_about)
         menubar.add_cascade(label="Help", menu=helpmenu)
         self.config(menu=menubar)
         
@@ -139,7 +197,8 @@ class main(ctk.CTk):
         style.map('TCombobox', 
         fieldbackground=[('readonly', 'white')],
         background=[('readonly', 'lightgrey')])
-        
+
+
     def open_help_html(self):
         import urllib.parse
         

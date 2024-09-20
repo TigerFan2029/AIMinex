@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 def yellowbrick(self, X):
     # Create and display the KElbowVisualizer for clustering
     plt.rcParams.update({'font.size': 10})
-    fig = plt.figure(figsize=(3, 2))
+    fig = plt.figure(figsize=(3, 3))
     ax = fig.add_subplot(111)
     ax.axis('off')
     #try:
