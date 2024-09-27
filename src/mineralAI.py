@@ -154,7 +154,7 @@ class main(ctk.CTk):
 
         # Create file menu options
         self.filemenu.add_command(label="Open File", command=self.load_data)
-        self.filemenu.add_command(label="New Tab", command=lambda: self.shared_container.create_tab("New Tab"))
+        self.filemenu.add_command(label="New Tab", command=lambda: self.shared_container.create_tab())
         self.filemenu.entryconfig("New Tab", state=tk.DISABLED)
         
         self.save_pc_menu = tk.Menu(self.filemenu, tearoff=0)

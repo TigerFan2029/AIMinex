@@ -242,7 +242,7 @@ class loading_cluster:
     def update_plots(self):
         # Update plots with selected clustering method and options
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Cluster Bar Graph by Elements")
+            self.shared_container.create_tab() #("Cluster Bar Graph by Elements")
 
         # Close all existing plots and clear widgets
         plt.close('all')

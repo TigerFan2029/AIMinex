@@ -117,7 +117,7 @@ class threed_class:
     def show_shape(self):
         # Show 3D PCA plot with selected components and options         
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("3D Biplot")
+            self.shared_container.create_tab() #("3D Biplot")
 
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]

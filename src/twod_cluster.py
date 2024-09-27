@@ -247,7 +247,7 @@ class Cluster2DPlotClass:
     def show_cluster(self):         
         # Check if there is an active tab in the shared container
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("2D Cluster")
+            self.shared_container.create_tab() #("2D Cluster")
 
         # Clear the content frame and legend frame
         plt.close('all')

@@ -108,7 +108,7 @@ class drill_class:
     def update_plots(self):
         # Create a new tab if not already present
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Drill Hole")
+            self.shared_container.create_tab() #("Drill Hole")
 
         content_frame = self.shared_container.current_tab[1]
         for widget in content_frame.winfo_children():

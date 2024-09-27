@@ -218,7 +218,7 @@ class sample_cluster:
     def show_cluster(self):
         # Create a new tab for displaying the PCA cluster by samples
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("PCA Cluster by Samples")
+            self.shared_container.create_tab() #("PCA Cluster by Samples")
     
         # Close all existing plots and clear widgets
         plt.close('all')

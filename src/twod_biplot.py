@@ -118,7 +118,7 @@ class twod_class:
 
     def show_shape(self):            
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("2D Biplot")
+            self.shared_container.create_tab() #("2D Biplot")
 
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]

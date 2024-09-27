@@ -263,7 +263,7 @@ class Cluster3DPlotClass:
     def show_cluster(self):
         # Display the 3D cluster plot based on the selected axes and clustering algorithm
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("3D Cluster")
+            self.shared_container.create_tab() #("3D Cluster")
 
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]

@@ -123,7 +123,7 @@ class loading_class:
         # Update plots with selected groups and options
         sort = self.var.get() == 1
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Element BarGraph")
+            self.shared_container.create_tab() #("Element BarGraph")
 
         # Close all existing plots and clear widgets
         plt.close('all')

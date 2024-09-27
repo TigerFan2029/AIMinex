@@ -75,7 +75,7 @@ class sample_class:
         # Update plots with selected options
         sort = self.var.get() == 1 
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Sample BarGraph")
+            self.shared_container.create_tab() #("Sample BarGraph")
 
         # Close all existing plots and clear widgets
         plt.close('all')
