@@ -265,7 +265,7 @@ class main(ctk.CTk):
         # define the buttons first so they dont reset
 
         self.scaler_combo = ctk.CTkComboBox(self.selection_frame, values=["Standard Scaler", "Logarithmic Scaler"], state="readonly")
-        self.scaler_combo.set("Select PCA Scaler:")
+        self.scaler_combo.set("Standard Scaler")
         self.pca_type_combo = ctk.CTkComboBox(self.selection_frame, values=["PCA", "Kernel PCA"], command=self.kernelstat, state="readonly")
         self.pca_type_combo.set("PCA")
         self.slider = ctk.CTkSlider(self.selection_frame, from_=1, to=8, number_of_steps=7, command=self.on_slider_change)

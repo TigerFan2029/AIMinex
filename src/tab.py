@@ -12,6 +12,7 @@ class SharedContainer:
         self.content_container.pack(fill='both', expand=True)
         self.tabs = []
         self.current_tab = None
+        self.tab_count = 0  # Initialize tab counter
 
         # Add a plus button for creating new tabs
         self.plus_button = ctk.CTkButton(self.tab_container, text="+", width=25, height=25, border_width=0, hover_color="darkgrey", text_color="black", fg_color="transparent", command=self.create_tab_button)
@@ -19,6 +20,8 @@ class SharedContainer:
 
     def create_tab(self, title="New Tab"):
         # Create a new tab with a title
+        self.tab_count += 1  # Increment tab counter
+        title = f"Layout {self.tab_count}"  # Generate title based on tab counter
         tab_frame = tk.Frame(self.tab_container, bd=1, relief=tk.RAISED, height=30)  # Set height
         tab_label = ctk.CTkLabel(tab_frame, text=title)
         tab_label.bind("<Double-1>", lambda event: self.edit_tab_label(tab_label))
@@ -56,7 +59,7 @@ class SharedContainer:
 
 
     def create_tab_button(self):
-        # Create a new tab with default title "New Tab"
+        # Create a new tab with default title "Layout #"
         self.create_tab()
 
     def select_tab(self, tab_frame, content_frame):
