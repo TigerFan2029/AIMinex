@@ -1,13 +1,12 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import ttk,IntVar
+from tkinter import ttk, IntVar
 from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 
 import pandas as pd
 import numpy as np
-
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
@@ -17,64 +16,67 @@ from sklearn.cluster import KMeans
 from sklearn.pipeline import Pipeline
 
 from sklearn.cluster import AgglomerativeClustering, DBSCAN, SpectralClustering, MeanShift, AffinityPropagation, AgglomerativeClustering, Birch
-from sklearn.mixture import GaussianMixture
+from sklearn.mixture import GaussianMixture 
 
 from PIL import Image
 from tktooltip import ToolTip
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
-from custom_spinbox import CTkSpinbox
-from plot_yellowbrick import yellowbrick
+from .custom_spinbox import CTkSpinbox
+from .plot_yellowbrick import yellowbrick
 
-class sample_cluster:
-    def __init__(self, shared_container, cluster, pca_df_scaled, df, cleaned_df, box_frame, box_frame_sub, on_button_click, apply_button, legend_frame):
-        # Initialize the PCCluster class with necessary parameters
-        self.pca_df_scaled = pca_df_scaled
+
+class loading_cluster:
+    def __init__(self, shared_container, cluster, loadings, box_frame, box_frame_sub, on_button_click, apply_button, legend_frame):
+        # Initialize the loading cluster class with necessary parameters
+        self.loadings = loadings
         self.shared_container = shared_container
         self.cluster_result = cluster
-        self.df = df.dropna()
         self.box_frame = box_frame
         self.box_frame_sub = box_frame_sub
         self.legend_frame = legend_frame
-        self.cleaned_df = cleaned_df
         self.on_button_click = on_button_click
         self.apply_button = apply_button
-
-        self.var = IntVar()
         self.cluster_sort_var = IntVar()
         self.graph_data_df = None
+
         self.plot_cluster()
-    
+
     def plot_cluster(self):
-        # Create button for displaying cluster bar graph by samples
-        pil_image = Image.open("images/images_program/id.png")
+        # Create button for displaying cluster bar graph
+        pil_image = Image.open("src/minexai/images/images_program/ele.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
+        
+        # Create and place image button
+        self.image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text="", width=20)
+        self.image_button.grid(row=3, column=0, sticky="w", pady=0, padx=5)
 
-        self.image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
-        self.image_button.grid(row=3, column=1, sticky="w", pady=0, padx=5)
-
+        # Bind button click event to cluster function
         self.image_button.bind("<Button-1>", lambda event: self.on_button_click(self.image_button, self.plot_cluster_sub0))
 
-        ToolTip(self.image_button, msg="PC Cluster Bar Graph by Samples")
+        ToolTip(self.image_button, msg="PC Cluster Bar Graph by Elements")
 
     def plot_cluster_sub0(self):
-        # Create UI for cluster options and actions
+        # Create elements and clusters selection UI
         for widget in self.box_frame_sub.winfo_children():
             widget.destroy()
-        
-        self.cluster_sort_checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Sort Clusters Together", variable=self.cluster_sort_var)
-        # self.widget_dict["sample_check"] = self.cluster_sort_checkbox
-        self.cluster_sort_checkbox.custom_name = "sample_check"
-        self.cluster_sort_checkbox.grid(columnspan=2, row=0, column=0, pady=(5,0), padx=5)
 
+        # Create and pack checkbox for sorting clusters
+        self.cluster_sort_checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Sort Clusters Together", variable=self.cluster_sort_var)
+        self.cluster_sort_checkbox.custom_name = "loading_check"
+        self.cluster_sort_checkbox.grid(columnspan=2, row=0, column=0, pady=(5,0), padx=5)
+            
+        # Create and pack slider for number of clusters
         self.cluster_text = ctk.CTkLabel(self.box_frame_sub, text="Number of Clusters:")
         self.k_slider = tk.Scale(self.box_frame_sub, from_=2, to=10, orient=tk.HORIZONTAL, command = self.pipenplot)
-
-        self.apply_plot_3d_cluster = ctk.CTkButton(self.box_frame_sub, text="Apply", command=self.show_cluster)
+            
+        # Create and pack apply button
+        self.apply_plot_3d_cluster = ctk.CTkButton(self.box_frame_sub, text="Apply", command=self.update_plots)
         self.apply_plot_3d_cluster.grid(columnspan=2, row=6, column=0, pady=10, padx=5)
 
-        self.save_button = ctk.CTkButton(self.box_frame_sub, text="Save Clusters to Excel", command=self.save_clusters_to_excel)
+        # Create and pack save button
+        self.save_button = ctk.CTkButton(self.box_frame_sub, text="Save Clusters to Excel", command=self.save_loadings_to_excel)
         self.save_button.pack(side="bottom", padx=5, pady=5)
 
         # Define the values for the Spinbox
@@ -86,17 +88,15 @@ class sample_cluster:
         self.affinity_box = ttk.Combobox(self.box_frame_sub, values=affinity_box_values, state="readonly")
         self.affinity_box.current(0)
                 
-        self.min_sample_box = CTkSpinbox(self.box_frame_sub, step_size=1, min_value=2, max_value=100, width = 110)
+        self.min_sample_box = CTkSpinbox(self.box_frame_sub, step_size=1, min_value=2, max_value=100, width = 110) #, command=self.runeps)
         self.eps_box = CTkSpinbox(self.box_frame_sub, step_size=0.1, min_value=0.1, max_value=100, width = 110)
                     
         self.eps_text = ctk.CTkLabel(self.box_frame_sub, text="eps")
         self.min_sample_text = ctk.CTkLabel(self.box_frame_sub, text="min_sample")
 
-        # Get the scaled PCA values
-        self.X = self.pca_df_scaled.values
-
         self.plot_cluster_sub(self.cluster_result)
-
+    
+        
     def plot_cluster_sub(self, cluster):
         self.box_frame_sub.grid_propagate(False)
         self.cluster_result = cluster
@@ -133,13 +133,12 @@ class sample_cluster:
             self.eps_text.grid(row=3, column=0, pady=0, padx=(5,0), sticky="w")
             self.min_sample_text.grid(row=2, column=0, pady=5, padx=(5,0), sticky="w")
         
-            self.eps_box.grid(row=3, column=1, pady=0, padx=(0,5))
-            self.min_sample_box.grid(row=2, column=1, pady=10, padx=(0,5))
+            self.eps_box.grid(row=3, column=1, pady=0, padx=(0,5), sticky="e")
+            self.min_sample_box.grid(row=2, column=1, pady=10, padx=(0,5), sticky="e")
             self.param_text.grid(columnspan=2, row=1, column=0, pady=(5,0), padx=5)
             
         else:
             pass
-            
             
         if self.cluster_result in ["DBSCAN", "Mean Shift", "Affinity Propagation"]:
             self.cluster_text.grid_forget()
@@ -212,33 +211,50 @@ class sample_cluster:
         for widget in self.legend_frame.winfo_children():
             widget.destroy()
 
-        yellowbrick(self, self.X)
+        yellowbrick(self, self.loadings)
         
 
-    def show_cluster(self):
-        # Create a new tab for displaying the PCA cluster by samples
+    def normalize(self, values, vmin=None, vmax=None):
+        # Normalize values for color scaling
+        vmin = vmin if vmin is not None else np.min(values)
+        vmax = vmax if vmin is not None else np.max(values)
+        norm_values = (values - vmin) / (vmax - vmin)
+        return norm_values
+
+    def plot_pca_barchart(self, data, entry_name, ax, cluster_colors, sorted_labels):
+        # Plot the PCA bar chart with clusters
+        cluster_palette = plt.get_cmap('tab20', len(np.unique(cluster_colors)))
+        colors = cluster_palette(cluster_colors)
+        data.plot(kind='barh', color=colors, ax=ax, fontsize="xx-small")
+        ax.set_title(entry_name)
+        ax.grid(True, linestyle='--', linewidth=0.5)
+        ax.set_yticks(range(len(data)))
+        ax.set_yticklabels(sorted_labels, fontsize="xx-small") 
+        ax.set_ylabel('')
+
+        # Update y-axis labels
+        labels = ax.get_yticklabels()
+        new_labels = [label.get_text().replace('_ppm', '')
+                                      .replace('_pct', '')
+                                      .replace('_Howell', '') for label in labels]
+        ax.set_yticklabels(new_labels)
+
+    def update_plots(self):
+        # Update plots with selected clustering method and options
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab() #("PCA Cluster by Samples")
-    
+            self.shared_container.create_tab() #("Cluster Bar Graph by Elements")
+
         # Close all existing plots and clear widgets
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]
         for widget in content_frame.winfo_children():
             widget.destroy()
-    
-        # Get the number of clusters from the slider
+
         k = self.k_slider.get()
-    
-        # Clear any existing cluster print label
-        if hasattr(self, 'cluster_print') and self.cluster_print is not None:
-            self.cluster_print.destroy()
-            del self.cluster_print
-    
-        # Get the selected cluster method
+
+        # Get the selected clustering method
         cluster_result = self.cluster_result
-        self.cluster_print = ctk.CTkLabel(self.box_frame_sub, text=f"Cluster: {cluster_result}")
-        self.cluster_print.grid(columnspan=2, row=8, column=0, pady=5, padx=5)
-    
+        
         # Set up the pipeline for different clustering algorithms
         if cluster_result == "K-mean":
             self.pipe = Pipeline([
@@ -249,35 +265,35 @@ class sample_cluster:
         elif cluster_result == "DBSCAN":
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
-                ("model", DBSCAN(eps=self.eps_box.get(), min_samples=self.min_samples_box.get()))
+                ("model", DBSCAN(eps=self.eps_box.get(), min_samples=self.min_sample_box.get()))
             ])
 
-        elif cluster_result == "Mean Shift":
+        elif cluster_result == "Mean Shift":  
             from sklearn.cluster import estimate_bandwidth
-            bandwidth_value = estimate_bandwidth(self.X, quantile=0.2)
+            bandwidth_value = estimate_bandwidth(self.loadings, quantile=0.2)
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
                 ("model", MeanShift(bandwidth=bandwidth_value))
             ])
-
-        elif cluster_result == "Spectral":
+            
+        elif cluster_result == "Spectral":  
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
                 ("model", SpectralClustering(n_clusters=k, affinity='nearest_neighbors', random_state=0))
             ])
 
-        elif cluster_result == "GMM":
+        elif cluster_result == "GMM":   
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
                 ("model", GaussianMixture(n_components=k, random_state=0))
             ])
 
-        elif cluster_result == "Affinity Propagation":
+        elif cluster_result == "Affinity Propagation":   
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
                 ("model", AffinityPropagation(random_state=0))
             ])
- 
+
         elif cluster_result == "Hierarchical":
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
@@ -289,112 +305,113 @@ class sample_cluster:
                 ("scale", StandardScaler()),
                 ("model", Birch(n_clusters=k))
             ])
-
+            
         # Fit the pipeline to the data
-        self.pipe.fit(self.X)
-    
-        # Assign cluster labels to the dataframe
-        if cluster_result == "GMM":
-            self.df['cluster'] = self.pipe.named_steps["model"].predict(self.X)
+        self.pipe.fit(self.loadings)
+        self.clustering_results = pd.DataFrame(index=self.loadings.index)
+        
+        # Get clustering results
+        if cluster_result == "GMM":  
+            self.clustering_results['cluster'] = self.pipe.named_steps["model"].predict(self.loadings)
         else:
-            self.df['cluster'] = self.pipe.named_steps['model'].labels_
-    
-        # Plot PCA components with clusters
-        fig, axes = plt.subplots(nrows=1, ncols=self.X.shape[1], figsize=(15, 8))
-        cluster_colors = self.df['cluster'].values
-        sort_clusters = self.cluster_sort_var.get() == 1
+            self.clustering_results['cluster'] = self.pipe.named_steps['model'].labels_
+
+        fig, axes = plt.subplots(ncols=len(self.loadings.columns), figsize=(15, 8))
+        
+        cluster_colors = self.clustering_results['cluster'].values
+        self.clustering_results['element'] = self.loadings.index
+        
         graph_data = []
-    
-        for i in range(self.X.shape[1]):
+        sort_clusters = self.cluster_sort_var.get() == 1
+        
+        for i in range(len(self.loadings.columns)):
             pc_name = f'PC{i+1}'
-            data = self.pca_df_scaled.iloc[:, i]
-    
+            data = self.loadings[pc_name]
+
             if sort_clusters:
+                # Sort data by clusters
                 temp_df = pd.DataFrame({
                     'data': data,
                     'cluster': cluster_colors,
-                    'sample id': self.cleaned_df['sample id']
+                    'element':  self.clustering_results['element'],
+                    'PC': pc_name
                 })
+
                 sorted_df = temp_df.sort_values(by='cluster')
                 sorted_data = sorted_df['data']
                 sorted_cluster_colors = sorted_df['cluster'].values
-                sorted_labels = sorted_df['sample id'].values
+                sorted_labels = sorted_df['element'].values
                 self.plot_pca_barchart(sorted_data, pc_name, axes[i], sorted_cluster_colors, sorted_labels)
-                sorted_df['PC'] = pc_name
                 graph_data.append(sorted_df)
+                
             else:
                 temp_df = pd.DataFrame({
                     'data': data,
                     'cluster': cluster_colors,
-                    'sample id': self.cleaned_df['sample id'],
+                    'element':  self.clustering_results['element'],
                     'PC': pc_name
                 })
                 graph_data.append(temp_df)
-                labels = self.cleaned_df['sample id'].values
+                labels = temp_df['element'].values
                 self.plot_pca_barchart(data, pc_name, axes[i], cluster_colors, labels)
-    
-        # Combine graph data for saving to Excel
+
         self.graph_data_df = pd.concat(graph_data)
-    
-        # Adjust layout and display the plot
+
+        # Add a big title over all subplots
+        fig.suptitle(f'{cluster_result} PC Cluster Charts by Elements', fontsize=16)
+
         plt.tight_layout()
+        
+        # Add the plot to the tkinter canvas
         canvas = FigureCanvasTkAgg(fig, master=content_frame)
         canvas.draw()
+
+        # Add navigation toolbar to the canvas
         toolbar = NavigationToolbar2Tk(canvas, content_frame)
         toolbar.update()
         toolbar.pack(side=tk.TOP, fill=tk.X)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, in_=content_frame)
-    
-    def plot_pca_barchart(self, data, entry_name, ax, cluster_colors, sorted_labels):
-        # Plot the PCA bar chart with clusters
-        cluster_palette = plt.get_cmap('tab20', len(np.unique(cluster_colors)))
-        colors = cluster_palette(cluster_colors)
-        data.plot(kind='barh', color=colors, ax=ax, fontsize="xx-small")
-        ax.set_title(entry_name)
-        ax.grid(True, linestyle='--', linewidth=0.5)
-        ax.set_yticks(range(len(data)))
-        ax.set_yticklabels(sorted_labels, fontsize="xx-small")
-        ax.set_ylabel('')
-    
 
-    def save_clusters_to_excel(self):
-        # Save the clusters to an Excel file
+
+    def save_loadings_to_excel(self):
+        # Save the loadings to an Excel file
         if self.graph_data_df is None:
             print("No data to save. Ensure clusters are calculated and graph is generated.")
             return
-    
-        # Prompt user to save the file
+        
+        # Prompt user to select save location and filename
         file_name = fd.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")])
         if not file_name:
             return
-    
-        # Pivot the data for saving
-        pivot_data = self.graph_data_df.pivot_table(index='sample id', columns='PC', values='data', sort=False)
+
+        # Create a pivot table with the clustering results
+        pivot_data = self.graph_data_df.pivot_table(index='element', columns='PC', values='data', sort=False)
         pivot_data.columns = [f'{col}' for col in pivot_data.columns]
-    
-        # Save the pivoted data to an Excel file
+
+        # Save the pivot table to an Excel file
         with pd.ExcelWriter(file_name, engine='openpyxl') as excel_writer:
             pivot_data.to_excel(excel_writer, index=True)
-    
-        # Load the workbook and worksheet
+
+        # Load the saved workbook and worksheet
         wb = load_workbook(file_name)
         ws = wb.active
-    
-        # Apply cluster colors to the cells
+
+        # Define color map for clusters
         colormap = plt.get_cmap('Set2')
         cluster_colors = ['FF{:02x}{:02x}{:02x}'.format(int(r*255), int(g*255), int(b*255)) for r, g, b, _ in [colormap(i) for i in range(colormap.N)]]
         cluster_fill = [PatternFill(start_color=color, end_color=color, fill_type="solid") for color in cluster_colors]
-    
+
+        # Apply cluster colors to the Excel file
         for i in range(len(self.graph_data_df)):
-            sample_id = self.graph_data_df.iloc[i]['sample id']
+            element = self.graph_data_df.iloc[i]['element']
             cluster = self.graph_data_df.iloc[i]['cluster']
             row = ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=1)
             for cell in row:
-                if cell[0].value == sample_id:
+                if cell[0].value == element:
                     for col in range(2, ws.max_column + 1):
                         ws.cell(row=cell[0].row, column=col).fill = cluster_fill[cluster]
-    
-        # Save the workbook
+
         wb.save(file_name)
-        print(f"Clusters saved to {file_name}")
-    
+        print(f"Loadings saved to {file_name}")
+
+

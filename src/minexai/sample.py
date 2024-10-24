@@ -28,7 +28,7 @@ class sample_class:
 
     def Graph_PCA(self):
         # Create button for displaying PC bar graph by samples
-        pil_image = Image.open("images/images_program/sample-screen-svgrepo-com.png")
+        pil_image = Image.open("src/minexai/images/images_program/sample-screen-svgrepo-com.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         # Create and place image button
@@ -53,6 +53,8 @@ class sample_class:
         self.apply_Graph_PCA = ctk.CTkButton(self.box_frame_sub, text="apply", command=self.update_plots)
         self.apply_Graph_PCA.pack(side="top", padx=5, pady=5)
 
+        self.box_frame_sub.update_idletasks()
+        
     def normalize(self, values, vmin=None, vmax=None):
         # Normalize values for color scaling
         vmin = vmin if vmin is not None else np.min(values)

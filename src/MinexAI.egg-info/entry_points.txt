@@ -1,0 +1,2 @@
+[console_scripts]
+minexai = minexai.minexai:main

@@ -14,32 +14,36 @@ from sklearn.decomposition import PCA, KernelPCA
 from PIL import Image
 import webbrowser
 import os
+import platform
 
-from terminal import MATerminal
-from pca import PCA_class
-from supervised import supervised_learning
-from tab import SharedContainer
-from loadings import loading_class
-from loading_cluster import loading_cluster
-from sample import sample_class
-from sample_cluster import sample_cluster
-from drill import drill_class
-from supervised import supervised_learning
-from biplot2d import class2d
-from biplot3d import class3d
-from cluster2d import Cluster2DPlotClass
-from cluster3d import Cluster3DPlotClass
-from about import show_about
-
-import color_change
+from .terminal import MATerminal
+from .pca import PCA_class
+from .supervised import supervised_learning
+from .tab import SharedContainer
+from .loadings import loading_class
+from .loading_cluster import loading_cluster
+from .sample import sample_class
+from .sample_cluster import sample_cluster
+from .drill import drill_class
+from .biplot2d import class2d
+from .biplot3d import class3d
+from .cluster2d import Cluster2DPlotClass
+from .cluster3d import Cluster3DPlotClass
+from .about import show_about
+from . import color_change
 
 
-class main(ctk.CTk):   
+class MainApp(ctk.CTk):   
     def __init__(self):
         super().__init__()
         self.title("MinexAI")
-        icon = tk.PhotoImage(file='images/images_program/logo.png')
-        self.iconphoto(False, icon)
+        #setting logo
+        if platform.system() == 'Windows':
+            self.iconbitmap('src/minexai/images/images_program/logo.ico')
+        else:
+            icon = tk.PhotoImage(file='src/minexai/images/images_program/logo.png')
+            self.iconphoto(False, icon)
+
         ctk.set_appearance_mode("Light")
         style = ttk.Style()
         style.theme_use("default")
@@ -205,7 +209,7 @@ class main(ctk.CTk):
         import urllib.parse
         
         # Open HTML help file
-        html_path = '_build/html/index.html'
+        html_path = 'src/minexai/_build/html/index.html'
         absolute_path = os.path.abspath(html_path)
         file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(absolute_path))
         print(f"Opening HTML file at: {file_url}")
@@ -315,6 +319,8 @@ class main(ctk.CTk):
             self.lithology_listbox.selection_clear(0, tk.END)
             
         self.lithology_listbox.bind('<Command-d>', lambda event: deselect_all())
+        self.lithology_listbox.bind('<Control-d>', lambda event: deselect_all())
+
         self.create_buttons()
 
     def create_buttons(self):
@@ -562,7 +568,8 @@ class main(ctk.CTk):
                 self.lithology_listbox.selection_clear(0, tk.END)
     
             self.lithology_listbox.bind('<Command-d>', lambda event: deselect_all())
-            
+            self.lithology_listbox.bind('<Control-d>', lambda event: deselect_all())
+
             if not selected_indices:
                 self.lithologies_label = ctk.CTkLabel(self.selection_frame, text="No lithology selected:(", font=("Arial", 12))
                 self.lithologies_label.grid(row=14, column=0, columnspan=4, padx=5, pady=(0,5))                   
@@ -779,9 +786,12 @@ class main(ctk.CTk):
             self.loadings.to_excel(excel_writer, sheet_name='Sheet1', startcol=1, index=False)
 
 
-if __name__ == "__main__":
-    app = main()
+def main():
+    app = MainApp()
     app.mainloop()
+
+if __name__ == "__main__":
+    main()
 
 
 
