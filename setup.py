@@ -1,16 +1,23 @@
 from setuptools import setup, find_packages
 
-with open("_build/html/index.html", "r", encoding="utf-8") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
     name="MinexAI",
     version="0.0.1",
-    description="MinexAI is a Graphing and Machine Learning Program designed to handle elemental data",    
-    packages=find_packages('src'),
+    description="MinexAI is a Graphing and Machine Learning Program designed to handle elemental data",
+    packages=find_packages(where='src'),
     package_dir={'': 'src'},
+    include_package_data=True,
+    package_data={
+        'minexai': [
+            'images/*.*',
+            '_build/*.*',
+        ],
+    },
     long_description=long_description,
-    long_description_content_type="text/html",
+    long_description_content_type="text/markdown",
     url="",
     author="Hom Nath Gharti & Tiger Fan",
     author_email="",
@@ -22,7 +29,7 @@ setup(
     ],
     python_requires=">=3.10",
     install_requires=[
-        'numpy',
+        'numpy>=1.23.0',
         'matplotlib',
         'pandas',
         'scikit-learn',
@@ -32,15 +39,13 @@ setup(
         'seaborn',
         'yellowbrick',
         'openpyxl',
-        'Pillow',
         'typing_extensions',
-        'pyttk',
-        'thread6',
         'tkscrolledframe',
+        'tkinter-tooltip',
     ],
     entry_points={
         'console_scripts': [
-            'minexai=main_program.minexai:main',
+            'minexai=minexai.minexai:main',
         ],
     },
 )

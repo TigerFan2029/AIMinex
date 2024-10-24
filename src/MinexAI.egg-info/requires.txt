@@ -1,0 +1,13 @@
+numpy>=1.23.0
+matplotlib
+pandas
+scikit-learn
+Pillow
+opencv-python
+customtkinter
+seaborn
+yellowbrick
+openpyxl
+typing_extensions
+tkscrolledframe
+tkinter-tooltip

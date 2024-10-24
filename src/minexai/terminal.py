@@ -3,7 +3,7 @@ import threading
 import code
 import sys
 import traceback
-import color_change
+from . import color_change
 
 class MATerminal:
     def __init__(self, text_widget, main_app):

@@ -1,5 +1,5 @@
 import unittest
-import mineralAI
+import minexai
 from threading import Thread
 import time
 
@@ -9,7 +9,7 @@ class TestMainGUI(unittest.TestCase):
         """Test to check if the GUI starts without errors."""
         def run_gui():
             try:
-                mineralAI.main()  # Start the GUI
+                minexai.main()  # Start the GUI
             except Exception as e:
                 self.fail(f"GUI failed to start with error: {e}")
         

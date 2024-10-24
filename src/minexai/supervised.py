@@ -29,7 +29,7 @@ class supervised_learning():
 
     def graph_icon(self):
         # Create button for displaying PC bar graph
-        pil_image = Image.open("images/images_program/ml.png")
+        pil_image = Image.open("src/minexai/images/images_program/ml.png")
 
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
