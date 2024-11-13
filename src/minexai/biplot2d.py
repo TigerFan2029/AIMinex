@@ -12,11 +12,11 @@ from matplotlib.backend_bases import MouseButton
 
 from PIL import Image
 from tktooltip import ToolTip
-import color_change
-from legend import legend
+from . import color_change
+from .legend import legend
 
 
-class twod_class:
+class class2d:
     def __init__(self, shared_container, pca_df_scaled, df, cleaned_df, box_frame, box_frame_sub, on_button_click, apply_button, legend_frame, loadings, selected_column):
         # Initialize the 2D class with required parameters
         self.shared_container = shared_container
@@ -43,7 +43,7 @@ class twod_class:
 
     def plot_2d(self):
         # Load and display the 2D plot icon button
-        pil_image = Image.open("images/images_program/chart-scatterplot-svgrepo-com.png")
+        pil_image = Image.open("src/minexai/images/images_program/chart-scatterplot-svgrepo-com.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create a label with the image button
@@ -107,6 +107,7 @@ class twod_class:
 
         # Bind Command-d (deselect all) to the listbox
         self.multiselect_2d.bind('<Command-d>', lambda event: deselect_all())
+        self.multiselect_2d.bind('<Control-d>', lambda event: deselect_all())
 
         # Apply button to show the 2D plot
         self.apply_plot_2d = ctk.CTkButton(self.box_frame_sub, text="apply", command=self.show_shape)
@@ -115,10 +116,12 @@ class twod_class:
         # Display message for clicking data point if 'sample id' column exists
         if "sample id" in self.cleaned_df.columns:
             ctk.CTkLabel(self.box_frame_sub, text="Click Data Point for \n Sample ID").pack(side="top", padx=5, pady=(5, 0))
+            
+        self.box_frame_sub.update_idletasks()
 
     def show_shape(self):            
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("2D Biplot")
+            self.shared_container.create_tab() #("2D Biplot")
 
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]

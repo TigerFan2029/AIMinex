@@ -28,7 +28,7 @@ class loading_class:
 
     def Graph_PC(self):
         # Create button for displaying PC bar graph
-        pil_image = Image.open("images/images_program/element-svgrepo-com.png")
+        pil_image = Image.open("src/minexai/images/images_program/element-svgrepo-com.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         # Create and place image button
@@ -62,6 +62,7 @@ class loading_class:
 
         # Bind deselect function to the listbox
         self.elements_listbox.bind('<Command-d>', lambda event: deselect_all())
+        self.elements_listbox.bind('<Control-d>', lambda event: deselect_all())
 
         # Create and pack button to add selected elements as a group
         self.add_group_button = ctk.CTkButton(self.box_frame_sub, text="Add Group", command=self.add_group)
@@ -79,6 +80,8 @@ class loading_class:
         self.clear_groups_button = ctk.CTkButton(self.box_frame_sub, text="Clear Groups", command=self.clear_groups)
         self.clear_groups_button.pack(side="top", padx=5, pady=5)
 
+        self.box_frame_sub.update_idletasks()
+        
     def clear_groups(self):
         # Clear all groups
         self.group_list.clear()
@@ -123,7 +126,7 @@ class loading_class:
         # Update plots with selected groups and options
         sort = self.var.get() == 1
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Element BarGraph")
+            self.shared_container.create_tab() #("Element BarGraph")
 
         # Close all existing plots and clear widgets
         plt.close('all')

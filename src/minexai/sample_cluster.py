@@ -24,8 +24,8 @@ from tktooltip import ToolTip
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
-from custom_spinbox import CTkSpinbox
-from plot_yellowbrick import yellowbrick
+from .custom_spinbox import CTkSpinbox
+from .plot_yellowbrick import yellowbrick
 
 class sample_cluster:
     def __init__(self, shared_container, cluster, pca_df_scaled, df, cleaned_df, box_frame, box_frame_sub, on_button_click, apply_button, legend_frame):
@@ -48,7 +48,7 @@ class sample_cluster:
     
     def plot_cluster(self):
         # Create button for displaying cluster bar graph by samples
-        pil_image = Image.open("images/images_program/id.png")
+        pil_image = Image.open("src/minexai/images/images_program/id.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         self.image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
@@ -56,7 +56,7 @@ class sample_cluster:
 
         self.image_button.bind("<Button-1>", lambda event: self.on_button_click(self.image_button, self.plot_cluster_sub0))
 
-        ToolTip(self.image_button, msg="PC Cluster Bar Graph by Samples")
+        ToolTip(self.image_button, msg="PC Cluster Bar Graph by Sample IDs")
 
     def plot_cluster_sub0(self):
         # Create UI for cluster options and actions
@@ -218,7 +218,7 @@ class sample_cluster:
     def show_cluster(self):
         # Create a new tab for displaying the PCA cluster by samples
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("PCA Cluster by Samples")
+            self.shared_container.create_tab() #("PCA Cluster by Samples")
     
         # Close all existing plots and clear widgets
         plt.close('all')
@@ -229,15 +229,8 @@ class sample_cluster:
         # Get the number of clusters from the slider
         k = self.k_slider.get()
     
-        # Clear any existing cluster print label
-        if hasattr(self, 'cluster_print') and self.cluster_print is not None:
-            self.cluster_print.destroy()
-            del self.cluster_print
-    
         # Get the selected cluster method
         cluster_result = self.cluster_result
-        self.cluster_print = ctk.CTkLabel(self.box_frame_sub, text=f"Cluster: {cluster_result}")
-        self.cluster_print.grid(columnspan=2, row=8, column=0, pady=5, padx=5)
     
         # Set up the pipeline for different clustering algorithms
         if cluster_result == "K-mean":
@@ -335,7 +328,10 @@ class sample_cluster:
     
         # Combine graph data for saving to Excel
         self.graph_data_df = pd.concat(graph_data)
-    
+
+        # Add a big title over all subplots
+        fig.suptitle(f'{cluster_result} PC Cluster Charts by Sample IDs', fontsize=16)
+
         # Adjust layout and display the plot
         plt.tight_layout()
         canvas = FigureCanvasTkAgg(fig, master=content_frame)

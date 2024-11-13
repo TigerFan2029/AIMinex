@@ -23,8 +23,8 @@ from tktooltip import ToolTip
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
-from custom_spinbox import CTkSpinbox
-from plot_yellowbrick import yellowbrick
+from .custom_spinbox import CTkSpinbox
+from .plot_yellowbrick import yellowbrick
 
 
 class loading_cluster:
@@ -45,7 +45,7 @@ class loading_cluster:
 
     def plot_cluster(self):
         # Create button for displaying cluster bar graph
-        pil_image = Image.open("images/images_program/ele.png")
+        pil_image = Image.open("src/minexai/images/images_program/ele.png")
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create and place image button
@@ -242,7 +242,7 @@ class loading_cluster:
     def update_plots(self):
         # Update plots with selected clustering method and options
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("Cluster Bar Graph by Elements")
+            self.shared_container.create_tab() #("Cluster Bar Graph by Elements")
 
         # Close all existing plots and clear widgets
         plt.close('all')
@@ -251,15 +251,9 @@ class loading_cluster:
             widget.destroy()
 
         k = self.k_slider.get()
-        
-        if hasattr(self, 'cluster_print') and self.cluster_print is not None:
-            self.cluster_print.destroy()
-            del self.cluster_print
 
         # Get the selected clustering method
         cluster_result = self.cluster_result
-        self.cluster_print = ctk.CTkLabel(self.box_frame_sub, text=f"Cluster: {cluster_result}")
-        self.cluster_print.grid(columnspan=2, row=7, column=0, pady=5, padx=5)
         
         # Set up the pipeline for different clustering algorithms
         if cluster_result == "K-mean":
@@ -271,7 +265,7 @@ class loading_cluster:
         elif cluster_result == "DBSCAN":
             self.pipe = Pipeline([
                 ("scale", StandardScaler()),
-                ("model", DBSCAN(eps=self.eps_box.get(), min_samples=self.min_samples_box.get()))
+                ("model", DBSCAN(eps=self.eps_box.get(), min_samples=self.min_sample_box.get()))
             ])
 
         elif cluster_result == "Mean Shift":  
@@ -362,6 +356,9 @@ class loading_cluster:
                 self.plot_pca_barchart(data, pc_name, axes[i], cluster_colors, labels)
 
         self.graph_data_df = pd.concat(graph_data)
+
+        # Add a big title over all subplots
+        fig.suptitle(f'{cluster_result} PC Cluster Charts by Elements', fontsize=16)
 
         plt.tight_layout()
         

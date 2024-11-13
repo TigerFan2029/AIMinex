@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import *
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import color_change
-from custom_toolbar import CustomToolbar
+from . import color_change
+from .custom_toolbar import CustomToolbar
 from matplotlib.lines import Line2D
 
 def legend(self):

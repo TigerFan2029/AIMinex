@@ -336,8 +336,9 @@ def shape_map(self):
         if column_to_use is None:
             raise ValueError("No suitable column found for shape mapping.")
         
-        self.cleaned_df = self.cleaned_df.applymap(lambda x: x.strip().lower() if isinstance(x, str) and pd.notnull(x) else x)
-        
+        #self.cleaned_df = self.cleaned_df.applymap(lambda x: x.strip().lower() if isinstance(x, str) and pd.notnull(x) else x)
+        self.cleaned_df = self.cleaned_df.apply(lambda col: col.map(lambda x: x.strip().lower() if isinstance(x, str) and pd.notnull(x) else x))
+
         ds = pd.DataFrame()
         ds = self.cleaned_df[str(column_to_use)]
         ds = ds.str.strip().to_frame()

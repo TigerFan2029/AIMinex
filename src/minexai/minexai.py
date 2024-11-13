@@ -14,30 +14,36 @@ from sklearn.decomposition import PCA, KernelPCA
 from PIL import Image
 import webbrowser
 import os
+import platform
 
-from terminal import MATerminal
-from pca import PCA_class
-from supervised import supervised_learning
-from tab import SharedContainer
-from loadings import loading_class
-from loading_cluster import loading_cluster
-from sample import sample_class
-from sample_cluster import sample_cluster
-from drill import drill_class
-from supervised import supervised_learning
-from twod_biplot import twod_class
-from threed_biplot import threed_class
-from twod_cluster import Cluster2DPlotClass
-from threed_cluster import Cluster3DPlotClass
-from about import show_about
-
-import color_change
+from .terminal import MATerminal
+from .pca import PCA_class
+from .supervised import supervised_learning
+from .tab import SharedContainer
+from .loadings import loading_class
+from .loading_cluster import loading_cluster
+from .sample import sample_class
+from .sample_cluster import sample_cluster
+from .drill import drill_class
+from .biplot2d import class2d
+from .biplot3d import class3d
+from .cluster2d import Cluster2DPlotClass
+from .cluster3d import Cluster3DPlotClass
+from .about import show_about
+from . import color_change
 
 
-class main(ctk.CTk):   
+class MainApp(ctk.CTk):   
     def __init__(self):
         super().__init__()
         self.title("MinexAI")
+        #setting logo
+        if platform.system() == 'Windows':
+            self.iconbitmap('src/minexai/images/images_program/logo.ico')
+        else:
+            icon = tk.PhotoImage(file='src/minexai/images/images_program/logo.png')
+            self.iconphoto(False, icon)
+
         ctk.set_appearance_mode("Light")
         style = ttk.Style()
         style.theme_use("default")
@@ -154,7 +160,7 @@ class main(ctk.CTk):
 
         # Create file menu options
         self.filemenu.add_command(label="Open File", command=self.load_data)
-        self.filemenu.add_command(label="New Tab", command=lambda: self.shared_container.create_tab("New Tab"))
+        self.filemenu.add_command(label="New Tab", command=lambda: self.shared_container.create_tab())
         self.filemenu.entryconfig("New Tab", state=tk.DISABLED)
         
         self.save_pc_menu = tk.Menu(self.filemenu, tearoff=0)
@@ -203,7 +209,7 @@ class main(ctk.CTk):
         import urllib.parse
         
         # Open HTML help file
-        html_path = '_build/html/index.html'
+        html_path = 'src/minexai/_build/html/index.html'
         absolute_path = os.path.abspath(html_path)
         file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(absolute_path))
         print(f"Opening HTML file at: {file_url}")
@@ -265,7 +271,7 @@ class main(ctk.CTk):
         # define the buttons first so they dont reset
 
         self.scaler_combo = ctk.CTkComboBox(self.selection_frame, values=["Standard Scaler", "Logarithmic Scaler"], state="readonly")
-        self.scaler_combo.set("Select PCA Scaler:")
+        self.scaler_combo.set("Standard Scaler")
         self.pca_type_combo = ctk.CTkComboBox(self.selection_frame, values=["PCA", "Kernel PCA"], command=self.kernelstat, state="readonly")
         self.pca_type_combo.set("PCA")
         self.slider = ctk.CTkSlider(self.selection_frame, from_=1, to=8, number_of_steps=7, command=self.on_slider_change)
@@ -313,6 +319,8 @@ class main(ctk.CTk):
             self.lithology_listbox.selection_clear(0, tk.END)
             
         self.lithology_listbox.bind('<Command-d>', lambda event: deselect_all())
+        self.lithology_listbox.bind('<Control-d>', lambda event: deselect_all())
+
         self.create_buttons()
 
     def create_buttons(self):
@@ -560,7 +568,8 @@ class main(ctk.CTk):
                 self.lithology_listbox.selection_clear(0, tk.END)
     
             self.lithology_listbox.bind('<Command-d>', lambda event: deselect_all())
-            
+            self.lithology_listbox.bind('<Control-d>', lambda event: deselect_all())
+
             if not selected_indices:
                 self.lithologies_label = ctk.CTkLabel(self.selection_frame, text="No lithology selected:(", font=("Arial", 12))
                 self.lithologies_label.grid(row=14, column=0, columnspan=4, padx=5, pady=(0,5))                   
@@ -676,8 +685,8 @@ class main(ctk.CTk):
         self.cluster_combo.grid(row=2, column=0, columnspan=3, sticky="w", pady=(10, 0), padx=5)
         self.cluster_combo.set("K-mean")
         self.cluster = self.cluster_combo.get()
-        self.twod_instance = Cluster2DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
-        self.threed_instance = Cluster3DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
+        self.instance2d = Cluster2DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
+        self.instance3d = Cluster3DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
         self.loading_cluster_instance = loading_cluster(self.shared_container, self.cluster, self.loadings, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
         if "sample id" in self.cleaned_df.columns:
             self.sample_cluster_instance = sample_cluster(self.shared_container, self.cluster, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
@@ -688,8 +697,8 @@ class main(ctk.CTk):
     def update_cluster(self, *arg):
         # update cluster
         self.cluster = self.cluster_combo.get()
-        self.twod_instance.cluster_result = self.cluster
-        self.threed_instance.cluster_result = self.cluster
+        self.instance2d.cluster_result = self.cluster
+        self.instance3d.cluster_result = self.cluster
         self.loading_cluster_instance.cluster_result = self.cluster
         self.sample_cluster_instance.cluster_result = self.cluster
 
@@ -697,10 +706,10 @@ class main(ctk.CTk):
         print("clusterchanged1")
         for widget in self.box_frame_sub.winfo_children():
             if widget.winfo_name() == "size_combo":
-                self.threed_instance.plot_3d_cluster_sub(self.cluster)  
+                self.instance3d.plot_3d_cluster_sub(self.cluster)  
                 print("3d")
             elif widget.winfo_name() == "size_combo1":
-                self.twod_instance.plot_2d_cluster_sub(self.cluster)
+                self.instance2d.plot_2d_cluster_sub(self.cluster)
                 print("2d")
             elif getattr(widget, "custom_name", "") == "loading_check":
                 self.loading_cluster_instance.plot_cluster_sub(self.cluster)  
@@ -724,8 +733,8 @@ class main(ctk.CTk):
         # Load graph with PCA and clustering
         self.selection()
         loading_class(self.loadings, self.shared_container, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-        threed_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
-        twod_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
+        class3d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
+        class2d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
         supervised_learning(self.df, self.cleaned_df, self.on_button_click, self.apply_button, self.box_frame)
         
         if "sample id" in self.cleaned_df.columns:
@@ -777,9 +786,12 @@ class main(ctk.CTk):
             self.loadings.to_excel(excel_writer, sheet_name='Sheet1', startcol=1, index=False)
 
 
-if __name__ == "__main__":
-    app = main()
+def main():
+    app = MainApp()
     app.mainloop()
+
+if __name__ == "__main__":
+    main()
 
 
 

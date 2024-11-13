@@ -11,10 +11,10 @@ from matplotlib.backend_bases import MouseButton
 
 from PIL import Image
 from tktooltip import ToolTip
-import color_change
-from legend import legend
+from . import color_change
+from .legend import legend
 
-class threed_class:
+class class3d:
     def __init__(self, shared_container, pca_df_scaled, df, cleaned_df, box_frame, box_frame_sub, on_button_click, apply_button, legend_frame, loadings, selected_column):
         # Initialize the 3D class with necessary parameters
         self.apply_button = apply_button
@@ -39,7 +39,7 @@ class threed_class:
 
     def plot_3d(self):
         # Create button for displaying 3D PCA biplot
-        pil_image = Image.open("images/images_program/cube-3d-svgrepo-com.png")
+        pil_image = Image.open("src/minexai/images/images_program/cube-3d-svgrepo-com.png")
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
@@ -105,6 +105,7 @@ class threed_class:
             self.multiselect_3d.selection_clear(0, tk.END)
 
         self.multiselect_3d.bind('<Command-d>', lambda event: deselect_all())
+        self.multiselect_3d.bind('<Control-d>', lambda event: deselect_all())
 
         # Apply button to show the 3D plot
         self.apply_plot_3d = ctk.CTkButton(self.box_frame_sub, text="apply", command=self.show_shape)
@@ -113,11 +114,13 @@ class threed_class:
         # Display message for clicking data point if 'sample id' column exists
         if "sample id" in self.cleaned_df.columns:
             ctk.CTkLabel(self.box_frame_sub, text="Click Data Point for\n Sample ID").pack(side="top", padx=5, pady=(5, 0))
+        
+        self.box_frame_sub.update_idletasks()
 
     def show_shape(self):
         # Show 3D PCA plot with selected components and options         
         if not self.shared_container.current_tab:
-            self.shared_container.create_tab("3D Biplot")
+            self.shared_container.create_tab() #("3D Biplot")
 
         plt.close('all')
         content_frame = self.shared_container.current_tab[1]
