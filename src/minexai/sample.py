@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import IntVar
 from tkinter import *
 from customtkinter import CTkImage
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,7 +29,10 @@ class sample_class:
 
     def Graph_PCA(self):
         # Create button for displaying PC bar graph by samples
-        pil_image = Image.open("src/minexai/images/images_program/sample-screen-svgrepo-com.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "sample-screen-svgrepo-com.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         # Create and place image button

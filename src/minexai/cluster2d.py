@@ -4,6 +4,7 @@ from tkinter import ttk, IntVar
 from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
+import os
 
 import pandas as pd
 import numpy as np
@@ -51,7 +52,10 @@ class Cluster2DPlotClass:
 
     def plot_2d_cluster(self):
         # Load and display the 2D cluster plot icon button
-        pil_image = Image.open("src/minexai/images/images_program/2d.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "2d.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         print(pil_image)
@@ -393,8 +397,9 @@ class Cluster2DPlotClass:
 
             # Plot the points with shapes and colors
             element_size = self.size_combo1.get()
+            from .color_change import column_to_use
             if element_size == "N/A":
-                if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+                if column_to_use is not None:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
                             color=colors[i], marker=color_change.ds["Shapes"][i]
@@ -403,7 +408,7 @@ class Cluster2DPlotClass:
 
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], c=colors)
 
-                elif "lithology" in self.cleaned_df.columns:
+                else:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
                             color=colors[i]
@@ -411,19 +416,6 @@ class Cluster2DPlotClass:
                         self.shapes.append(shape)
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], c=colors)                        
 
-                elif "rock unit" in self.cleaned_df.columns:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
-                            marker=color_change.ds["Shapes"][i]
-                        )
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2])                        
-
-                else:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df.iloc[i][axis1], self.df.iloc[i][axis2])
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2])
             else:
                 # Try to get element_size column values for size mapping
                 self.max_ele = self.df[element_size].max()
@@ -451,7 +443,7 @@ class Cluster2DPlotClass:
                 else:
                     sizes = self.df[element_size].apply(lambda x: map_size(x, 20, 100))
 
-                if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+                if column_to_use is not None:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
                             color=colors[i], marker=color_change.ds["Shapes"][i], s=sizes[i]
@@ -459,27 +451,13 @@ class Cluster2DPlotClass:
                         self.shapes.append(shape)   
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], c=colors, s=sizes)
 
-                elif "lithology" in self.cleaned_df.columns:
+                else:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
                             color=colors[i], s=sizes[i]
                         )
                         self.shapes.append(shape)
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], c=colors, s=sizes)   
-
-                elif "rock unit" in self.cleaned_df.columns:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df[axis1][i], self.df[axis2][i],
-                            marker=color_change.ds["Shapes"][i], s=sizes[i]
-                        )
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], s=sizes)
-                        
-                else:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df.iloc[i][axis1], self.df.iloc[i][axis2], s=sizes[i])
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], s=sizes)
 
             if "sample id" in self.cleaned_df.columns:
                 description = self.cleaned_df["sample id"]

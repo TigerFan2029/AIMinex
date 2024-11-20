@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, IntVar
 from tkinter import *
 from customtkinter import CTkImage
+import os
 
 import numpy as np
 import seaborn as sns
@@ -43,7 +44,10 @@ class class2d:
 
     def plot_2d(self):
         # Load and display the 2D plot icon button
-        pil_image = Image.open("src/minexai/images/images_program/chart-scatterplot-svgrepo-com.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "chart-scatterplot-svgrepo-com.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create a label with the image button
@@ -148,34 +152,22 @@ class class2d:
         # Plot the points with shapes and colors
         element_size = self.size_combo.get()
         self.shapes = []
+        from .color_change import column_to_use
         if element_size == "N/A":
-            if self.selected_column.lower() in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+            if column_to_use is not None:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter(xdata[i], ydata[i], c=color_change.dc['Color'][i], marker=color_change.ds["Shapes"][i])
                     self.shapes.append(shape)
 
                 self.dots = self.ax.scatter(xdata, ydata, c=color_change.dc['Color'])
 
-            elif self.selected_column.lower() in self.cleaned_df.columns:
+            else:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter(xdata[i], ydata[i], c=color_change.dc['Color'][i])
                     self.shapes.append(shape)
                     
                 self.dots = self.ax.scatter(xdata, ydata, c=color_change.dc['Color'])                        
 
-            elif "rock unit" in self.cleaned_df.columns:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter(xdata[i], ydata[i], marker=color_change.ds["Shapes"][i])
-                    self.shapes.append(shape)
-                    
-                self.dots = self.ax.scatter(xdata, ydata)                        
-
-            else:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter(xdata[i], ydata[i])
-                    self.shapes.append(shape)
-                    
-                self.dots = self.ax.scatter(xdata, ydata)
         else:
             # Try to get element_size column values for size mapping
             self.max_ele = self.df[element_size].max()
@@ -205,38 +197,24 @@ class class2d:
                 print("?")
                 sizes = self.df[element_size].apply(lambda x: map_size(x, 20, 100))
 
-            if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+            if column_to_use is not None:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter(xdata[i], ydata[i], c=color_change.dc['Color'][i], marker=color_change.ds["Shapes"][i], s=sizes[i]
                     )
                     self.shapes.append(shape)   
                 self.dots = self.ax.scatter(xdata, ydata, c=color_change.dc['Color'], s=sizes)
 
-            elif "lithology" in self.cleaned_df.columns:
+            else:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter(xdata[i], ydata[i], c=color_change.dc['Color'][i], s=sizes[i]
                     )
                     self.shapes.append(shape)
                 self.dots = self.ax.scatter(xdata, ydata, c=color_change.dc['Color'], s=sizes)   
 
-            elif "rock unit" in self.cleaned_df.columns:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter(xdata[i], ydata[i], marker=color_change.ds["Shapes"][i], s=sizes[i]
-                    )
-                    self.shapes.append(shape)
-                self.dots = self.ax.scatter(xdata, ydata, s=sizes)
-                    
-            else:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter(xdata[i], ydata[i], s=sizes[i])
-                    
-                    self.shapes.append(shape)
-                self.dots = self.ax.scatter(xdata, ydata, s=sizes)
-
         def plot_trendlines():
             # Plot trendlines for lithology groups
             trendline = self.var2.get() == 1
-            if trendline and 'lithology' in self.cleaned_df.columns:
+            if trendline: #and 'lithology' in self.cleaned_df.columns:
                 import statsmodels.api as sm
                 lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
@@ -345,33 +323,33 @@ class class2d:
             fig.canvas.mpl_connect("button_press_event", on_click)
             fig.canvas.mpl_connect("motion_notify_event", update_annotations)
 
-        if 'lithology' in self.cleaned_df.columns:
-            # Create and display box plots for lithology
-            filtered_df = self.cleaned_df.copy()
-            
-            xdata_filtered = self.pca_df_scaled.loc[filtered_df.index, pc1]
-            ydata_filtered = self.pca_df_scaled.loc[filtered_df.index, pc2]
-    
-            palette = list(color_change.color_map.values())
-            
-            sns.boxplot(x=xdata_filtered, y=filtered_df[self.selected_column.lower()], ax=ax_box_x, palette=palette, orient='h')
-            sns.boxplot(y=ydata_filtered, x=filtered_df[self.selected_column.lower()], ax=ax_box_y, palette=palette, orient='v')
-    
-            # Customize tick parameters for the box plots
-            ax_box_x.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-            ax_box_x.tick_params(axis='y', labelsize=8, left=False, right=True, labelleft=False, labelright=True)
-    
-            ax_box_y.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
-            ax_box_y.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-    
-            ax_box_x.set_ylabel(None)
-            ax_box_x.set_xlabel(None)
-            
-            ax_box_y.set_ylabel(None)
-            ax_box_y.set_xlabel(None)
+        #if 'lithology' in self.cleaned_df.columns:
+        # Create and display box plots for lithology
+        filtered_df = self.cleaned_df.copy()
+        
+        xdata_filtered = self.pca_df_scaled.loc[filtered_df.index, pc1]
+        ydata_filtered = self.pca_df_scaled.loc[filtered_df.index, pc2]
 
-            self.ax.axvline(x=0, color='black', linewidth=0.5)
-            self.ax.axhline(y=0, color='black', linewidth=0.5)
+        palette = list(color_change.color_map.values())
+        
+        sns.boxplot(x=xdata_filtered, y=filtered_df[self.selected_column.lower()], ax=ax_box_x, palette=palette, orient='h')
+        sns.boxplot(y=ydata_filtered, x=filtered_df[self.selected_column.lower()], ax=ax_box_y, palette=palette, orient='v')
+
+        # Customize tick parameters for the box plots
+        ax_box_x.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+        ax_box_x.tick_params(axis='y', labelsize=8, left=False, right=True, labelleft=False, labelright=True)
+
+        ax_box_y.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
+        ax_box_y.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+        ax_box_x.set_ylabel(None)
+        ax_box_x.set_xlabel(None)
+        
+        ax_box_y.set_ylabel(None)
+        ax_box_y.set_xlabel(None)
+
+        self.ax.axvline(x=0, color='black', linewidth=0.5)
+        self.ax.axhline(y=0, color='black', linewidth=0.5)
 
         # Create and display the plot canvas and toolbar
         canvas = FigureCanvasTkAgg(fig, master=content_frame)

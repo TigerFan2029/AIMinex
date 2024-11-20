@@ -5,6 +5,7 @@ from tkinter import filedialog as fd
 from customtkinter import CTkImage
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import os
 
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
@@ -15,8 +16,8 @@ from tktooltip import ToolTip
 
 class supervised_learning():
     def __init__(self, df, cleaned_df, on_button_click, apply_button, box_frame):
-        self.df = df  # The dataframe without 'lithology'
-        self.cleaned_df = cleaned_df  # DataFrame with 'lithology' column
+        self.df = df
+        self.cleaned_df = cleaned_df
         self.on_button_click = on_button_click
         self.apply_button = apply_button
         self.box_frame = box_frame
@@ -29,7 +30,9 @@ class supervised_learning():
 
     def graph_icon(self):
         # Create button for displaying PC bar graph
-        pil_image = Image.open("src/minexai/images/images_program/ml.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "ml.png")
+        pil_image = Image.open(image_path)
 
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
