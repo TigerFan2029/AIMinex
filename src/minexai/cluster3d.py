@@ -31,7 +31,7 @@ from .legend import legend
 from .plot_yellowbrick import yellowbrick
 
 class Cluster3DPlotClass:
-    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame, selected_column):
+    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame):
         # Initialize class variables
         self.df = df.dropna()
         self.shared_container = shared_container
@@ -44,7 +44,6 @@ class Cluster3DPlotClass:
 
         self.var = IntVar()
         self.var1 = IntVar()
-        self.selected_column = selected_column
 
         self.plot_3d_cluster()
 
@@ -94,9 +93,9 @@ class Cluster3DPlotClass:
         
         #select element for data point size
         ctk.CTkLabel(self.box_frame_sub, text="Element for Data Point Size").grid(columnspan=2,row=6, column=0, pady=(5,0), padx=5)
-        self.size_combo = ttk.Combobox(self.box_frame_sub, values=self.df.columns.tolist(), name="size_combo", state="readonly")
-        self.size_combo.set("N/A")
-        self.size_combo.grid(columnspan=2,row=7, column=0, pady=(3,5), padx=5)
+        self.size_combo_3d = ttk.Combobox(self.box_frame_sub, values=self.df.columns.tolist(), name="size_combo_3d", state="readonly")
+        self.size_combo_3d.set("N/A")
+        self.size_combo_3d.grid(columnspan=2,row=7, column=0, pady=(3,5), padx=5)
 
         # Clean and prepare data for clustering
         axis1 = self.axis1_combo.get()
@@ -385,7 +384,7 @@ class Cluster3DPlotClass:
                     colors = color_change.dc['Color']
             
             # Plot the points with shapes and colors
-            element_size = self.size_combo.get()
+            element_size = self.size_combo_3d.get()
             from .color_change import column_to_use
             if element_size == "N/A":
                 if column_to_use is not None:

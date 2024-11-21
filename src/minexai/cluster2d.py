@@ -32,7 +32,7 @@ from .legend import legend
 from .plot_yellowbrick import yellowbrick
 
 class Cluster2DPlotClass:
-    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame, selected_column):
+    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame):
         # Initialize the 2D cluster plot class with required parameters
         self.df = df.dropna()
         self.shared_container = shared_container
@@ -45,7 +45,6 @@ class Cluster2DPlotClass:
         self.var = IntVar()
         self.var1 = IntVar()
         self.cluster_result = cluster
-        self.selected_column = selected_column
     
         self.plot_2d_cluster()
 
@@ -90,9 +89,9 @@ class Cluster2DPlotClass:
         self.axis2_combo.grid(columnspan=2, row=3, column=0, pady=(3,0), padx=5)
 
         ctk.CTkLabel(self.box_frame_sub, text="Element for Data Point Size").grid(columnspan=2, row=4, column=0, pady=(5,0), padx=5)
-        self.size_combo1 = ttk.Combobox(self.box_frame_sub, values=self.df.columns.tolist(), name="size_combo1", state="readonly")
-        self.size_combo1.set("N/A")
-        self.size_combo1.grid(columnspan=2, row=5, column=0, pady=(3,5), padx=5)
+        self.size_combo_2d = ttk.Combobox(self.box_frame_sub, values=self.df.columns.tolist(), name="size_combo_2d", state="readonly")
+        self.size_combo_2d.set("N/A")
+        self.size_combo_2d.grid(columnspan=2, row=5, column=0, pady=(3,5), padx=5)
 
         axis1 = self.axis1_combo.get()
         axis2 = self.axis2_combo.get()
@@ -396,7 +395,7 @@ class Cluster2DPlotClass:
                 pass
 
             # Plot the points with shapes and colors
-            element_size = self.size_combo1.get()
+            element_size = self.size_combo_2d.get()
             from .color_change import column_to_use
             if element_size == "N/A":
                 if column_to_use is not None:

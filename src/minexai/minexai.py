@@ -58,14 +58,12 @@ class MainApp(ctk.CTk):
         self.box_frame_sub_visible = True
         self.create_widgets()
 
-        # Get the system default color for selection background
+        # Set application color scheme
         system_select_bg = self.option_get('selectBackground', '')
 
-        # If the system default is empty, use a fallback color
         if not system_select_bg:
             system_select_bg = 'LightSkyBlue1'
         
-        # Set the palette
         self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')
 
     def toggle_box_frame_sub(self):
@@ -90,7 +88,6 @@ class MainApp(ctk.CTk):
         y = self.winfo_height() // 2 - self.toggle_button.winfo_height() // 2
 
         self.toggle_button.place(x=x, y=y)
-
     
     def create_widgets(self):
         # Create a PanedWindow
@@ -133,7 +130,6 @@ class MainApp(ctk.CTk):
 
         self.right_frame.grid_rowconfigure(1, weight=1)
         self.right_frame.grid_columnconfigure(0, weight=1)
-
 
         # Create the toggle button
         self.toggle_button = ctk.CTkButton(
@@ -210,7 +206,6 @@ class MainApp(ctk.CTk):
 
     def open_help_html(self):
         import urllib.parse
-        
         # Open HTML help file
         html_path = 'src/minexai/_build/html/index.html'
         absolute_path = os.path.abspath(html_path)
@@ -230,7 +225,6 @@ class MainApp(ctk.CTk):
     def load_data(self):
         # Load data from selected file
         try:
-            #self.file_path = 'Geochemistry Results-AGG reduced variables.xlsx'
             self.file_path = fd.askopenfilename()
             if not self.file_path:
                 self.output_text.insert("end", "No file selected\n")
@@ -262,16 +256,15 @@ class MainApp(ctk.CTk):
             
             for widget in self.selection_frame.winfo_children():
                 widget.destroy()
-            self.process_sheet()
             
         except Exception as e:
             self.output_text.insert("end", f"Error loading sheet: {str(e)}\n")
+        
+        self.process_sheet()
 
     def process_sheet(self):
-        # Process the sheet and populate lithology options
-        valid_columns = [col for col in self.df_0.columns if '_ppm' not in col and '_pct' not in col]
-
-        # define the buttons first so they dont reset
+        # Create widgets to select scaler/pca type, and column to use to filter data. 
+        valid_columns = [col for col in self.df_0.columns if '_ppm' not in col and '_pct' not in col] #["None(include ALL)"]+
 
         self.scaler_combo = ctk.CTkComboBox(self.selection_frame, values=["Standard Scaler", "Logarithmic Scaler"], state="readonly")
         self.scaler_combo.set("Standard Scaler")
@@ -286,14 +279,17 @@ class MainApp(ctk.CTk):
             self.selected_column_combobox.grid(row=0, column=2, columnspan=3, sticky="we", padx=5, pady=(5,0))
             self.selected_column_combobox.set(valid_columns[0])
 
-            self.update_listbox()
-
         else:
             self.output_text.insert("end", "No valid columns found in dataframe\n")
 
+        self.update_listbox()
+
     def update_listbox(self, event=None):
+        # create listbox containing unique groups in select column to filter (lithology stands for unique group/name)
         self.selected_column = self.selected_column_combobox.get()
-        
+
+        # if self.selected_column == "None(include ALL)":
+        #     self.create_buttons()
         if self.selected_column:
             self.df_0[self.selected_column] = self.df_0[self.selected_column].apply(lambda x: x.strip().lower().title() if isinstance(x, str) and pd.notnull(x) else x)
             self.lithology_listbox = tk.Listbox(self.selection_frame, selectmode=tk.MULTIPLE)
@@ -327,7 +323,7 @@ class MainApp(ctk.CTk):
         self.create_buttons()
 
     def create_buttons(self):
-        # Create PCA and scaling options
+        # Pack PCA and scaling options widgets
         self.current_button = None
         
         self.scaler_combo.grid(row=2, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
@@ -488,7 +484,7 @@ class MainApp(ctk.CTk):
             widget.destroy()
 
     def filter_dataframe(self):   
-        #Filter dataframe based on selected lithology and update UI
+        # delete previous labels
         if hasattr(self, 'scaler_label') and self.scaler_label is not None:
             self.scaler_label.destroy()
             del self.scaler_label
@@ -500,6 +496,11 @@ class MainApp(ctk.CTk):
         if hasattr(self, 'color_window') and self.color_window.winfo_exists():
             self.color_window.destroy()
 
+        if hasattr(self, 'lithologies_label') and self.lithologies_label is not None:
+            self.lithologies_label.destroy()
+            del self.lithologies_label
+
+        #set PCA/Kernel PCA parameters
         if self.pca_type_combo.get() == "PCA":
             self.pca_label = ctk.CTkLabel(self.selection_frame, text="PCA", font=("Arial", 12))
             
@@ -526,36 +527,25 @@ class MainApp(ctk.CTk):
    
         self.clear()
         self.current_button = None
-        if hasattr(self, 'lithologies_label') and self.lithologies_label is not None:
-            self.lithologies_label.destroy()
-            del self.lithologies_label
 
+        #Filter/process dataframe based on selected lithology and parameters
         try:
-            # Check selected lithologies and add check mark to them
-            # Get selected indices from the listbox
+            # Find selected lithologies(unique groups) and add check mark to them
             selected_indices = self.lithology_listbox.curselection()
 
-            # Retrieve the selected lithologies from the listbox
             select_lithologies = [self.lithology_listbox.get(i) for i in selected_indices]
             selected_lithologies = [item.replace('✔️ ', '').strip() for item in select_lithologies]
 
-            # Debugging output to check the selected values and their types
             print(f"Selected column: {self.selected_column}")
             print(f"Selected rows: {selected_lithologies} (Type: {type(selected_lithologies[0]) if selected_lithologies else 'Empty'})")
 
-            # Strip any leading/trailing whitespace from the DataFrame column
             self.df_0[self.selected_column] = self.df_0[self.selected_column].astype(str).str.strip()
 
-            # Additional debugging to check the unique values in the DataFrame column
             print(f"Original DataFrame values in column {self.selected_column}: {self.df_0[self.selected_column].unique()}")
 
-            # Filter the DataFrame using the selected lithologies
+            # Create filtered DataFrame using the selected lithologies
             self.filtered_df = self.df_0[self.df_0[self.selected_column].isin(selected_lithologies)]
 
-            # Output the filtered DataFrame for verification
-            print(f"Filtered DataFrame: \n{self.filtered_df}")
-
-            
             item = None
             self.lithology_listbox.delete(0, tk.END)
             self.selected_items = {lithology: (lithology in selected_lithologies) for lithology in self.lithologies}
@@ -579,7 +569,7 @@ class MainApp(ctk.CTk):
         except:
             self.filtered_df = self.df_0
 
-        # Cleaning Data Frame to contain only the datas/elements
+        # Cleaning Data Frame to contain only the data/elements
         filtered_columns = [col for col in self.filtered_df.columns if '_ppm' in col or '_pct' in col]
 
         df_filtered = self.filtered_df.replace('<', '', regex=True)
@@ -587,6 +577,7 @@ class MainApp(ctk.CTk):
         self.cleaned_df = df_filtered.dropna(subset=filtered_columns)
         
         df_filtered = self.cleaned_df[filtered_columns]
+
         self.cleaned_df.columns = self.cleaned_df.columns.str.strip().str.lower()
 
         self.df = df_filtered
@@ -610,13 +601,10 @@ class MainApp(ctk.CTk):
         if LREE_elements_in_df or HREE_elements_in_df:
             self.df_c['REE'] = self.df_c[LREE_elements_in_df + HREE_elements_in_df].sum(axis=1)
 
-        self.update_output()
-        self.print_pca()
-
-    def update_output(self):
         self.output_text.insert("end", f"Filtered & Cleaned df:\n{self.df.shape}\n")
+        self.perform_pca()
         
-    def print_pca(self):
+    def perform_pca(self):
         # Perform PCA and update output
         try:
             self.pca_instance = PCA_class(self.df, self.scaler_combo, self.pca_type_combo, self.output_text, self.slider, self.kernel_combo, self.gamma, self.degree, self.coef)
@@ -681,16 +669,21 @@ class MainApp(ctk.CTk):
             raise ValueError("self.pca must be an instance of PCA or KernelPCA")
     
     def selection(self):
-        # Create a combo box for selecting clustering methods
+        # Create a combo box for selecting clustering methods and initiate the modules
         self.cluster_combo = ctk.CTkComboBox(
             self.box_frame, values=["K-mean", "Hierarchical", "DBSCAN", "Mean Shift", "Spectral", "GMM", "Affinity Propagation", "BIRCH"], width=100, height=20, command=self.update_cluster, state="readonly")
 
         self.cluster_combo.grid(row=2, column=0, columnspan=3, sticky="w", pady=(10, 0), padx=5)
         self.cluster_combo.set("K-mean")
         self.cluster = self.cluster_combo.get()
-        self.instance2d = Cluster2DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
-        self.instance3d = Cluster3DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
+
+        self.instance2d = Cluster2DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame)
+        self.instance3d = Cluster3DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame)
         self.loading_cluster_instance = loading_cluster(self.shared_container, self.cluster, self.loadings, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
+        if "sample id" in self.cleaned_df.columns:  
+            self.sample_cluster_instance = sample_cluster(self.shared_container, self.cluster, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
+        else:
+            pass
 
     def update_cluster(self, *arg):
         # update cluster
@@ -700,12 +693,12 @@ class MainApp(ctk.CTk):
         self.loading_cluster_instance.cluster_result = self.cluster
         self.sample_cluster_instance.cluster_result = self.cluster
 
-        # rerun plot_2d_cluster_sub to refresh options in box_frame_sub
+        # re-initiate cluster modules to refresh options in box_frame_sub
         for widget in self.box_frame_sub.winfo_children():
-            if widget.winfo_name() == "size_combo":
+            if widget.winfo_name() == "size_combo_3d":
                 self.instance3d.plot_3d_cluster_sub(self.cluster)  
                 print("3d")
-            elif widget.winfo_name() == "size_combo1":
+            elif widget.winfo_name() == "size_combo_2d":
                 self.instance2d.plot_2d_cluster_sub(self.cluster)
                 print("2d")
             elif getattr(widget, "custom_name", "") == "loading_check":
@@ -727,7 +720,7 @@ class MainApp(ctk.CTk):
         self.cleaned_df.reset_index(drop=True, inplace=True)
         self.df_c.reset_index(drop=True, inplace=True)
 
-        # Load graph with PCA and clustering
+        # Initiate modules
         self.selection()
         loading_class(self.loadings, self.shared_container, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
         class3d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
@@ -744,8 +737,6 @@ class MainApp(ctk.CTk):
 
         if "sample id" in self.cleaned_df.columns:
             sample_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-            self.sample_cluster_instance = sample_cluster(self.shared_container, self.cluster, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
-
         else:
             print("Column Sample ID not in data frame, sample bar graph, and sample cluster bar graph not avaliable")
             
@@ -774,7 +765,6 @@ class MainApp(ctk.CTk):
 
         with pd.ExcelWriter(file_name, engine='openpyxl') as excel_writer:
             self.cleaned_df["sample id"].to_excel(excel_writer, sheet_name='Sheet1', index=False, header=True)
-            # self.cleaned_df["sample id"].shape
             self.pca_df_scaled.to_excel(excel_writer, sheet_name='Sheet1', startcol=1, index=False)
     
     def export_pc_by_element(self):
