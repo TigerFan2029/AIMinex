@@ -4,6 +4,7 @@ from tkinter import ttk, IntVar
 from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
+import os
 
 import pandas as pd
 import numpy as np
@@ -45,7 +46,10 @@ class loading_cluster:
 
     def plot_cluster(self):
         # Create button for displaying cluster bar graph
-        pil_image = Image.open("src/minexai/images/images_program/ele.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "ele.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create and place image button

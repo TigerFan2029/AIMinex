@@ -4,6 +4,7 @@ from tkinter import ttk, IntVar
 from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
+import os
 
 import pandas as pd
 import numpy as np
@@ -49,7 +50,10 @@ class Cluster3DPlotClass:
 
     def plot_3d_cluster(self):
         # Load and resize the image for the 3D plot button
-        pil_image = Image.open("src/minexai/images/images_program/3d.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "3d.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
         # Create a label with the icon and bind a click event to it
@@ -382,8 +386,9 @@ class Cluster3DPlotClass:
             
             # Plot the points with shapes and colors
             element_size = self.size_combo.get()
+            from .color_change import column_to_use
             if element_size == "N/A":
-                if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+                if column_to_use is not None:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
                             color=colors[i], marker=color_change.ds["Shapes"][i]
@@ -392,7 +397,7 @@ class Cluster3DPlotClass:
 
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], c=colors)
 
-                elif "lithology" in self.cleaned_df.columns:
+                else:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
                             color=colors[i]
@@ -400,19 +405,6 @@ class Cluster3DPlotClass:
                         self.shapes.append(shape)
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], c=colors)                        
 
-                elif "rock unit" in self.cleaned_df.columns:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
-                            marker=color_change.ds["Shapes"][i]
-                        )
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3])                        
-
-                else:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df.iloc[i][axis1], self.df.iloc[i][axis2], self.df.iloc[i][axis3])
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3])
             else:
                 # Try to get element_size column values for size mapping
                 self.max_ele = self.df[element_size].max()
@@ -440,7 +432,7 @@ class Cluster3DPlotClass:
                 else:
                     sizes = self.df[element_size].apply(lambda x: map_size(x, 20, 100))
 
-                if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+                if column_to_use is not None:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
                             color=colors[i], marker=color_change.ds["Shapes"][i], s=sizes[i]
@@ -448,28 +440,13 @@ class Cluster3DPlotClass:
                         self.shapes.append(shape)   
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], c=colors, s=sizes)
 
-                elif "lithology" in self.cleaned_df.columns:
+                else:
                     for i in range(len(self.df)):
                         shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
                             color=colors[i], s=sizes[i]
                         )
                         self.shapes.append(shape)
                     self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], c=colors, s=sizes)   
-
-                elif "rock unit" in self.cleaned_df.columns:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df[axis1][i], self.df[axis2][i], self.df[axis3][i],
-                            marker=color_change.ds["Shapes"][i], s=sizes[i]
-                        )
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], s=sizes)
-                        
-                else:
-                    for i in range(len(self.df)):
-                        shape = ax.scatter(self.df.iloc[i][axis1], self.df.iloc[i][axis2], self.df.iloc[i][axis3], s=sizes[i])
-                        self.shapes.append(shape)
-                    self.dots = ax.scatter(self.df[axis1], self.df[axis2], self.df[axis3], s=sizes)
-
 
             # Annotate points with sample IDs if available
             if "sample id" in self.cleaned_df.columns:

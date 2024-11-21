@@ -16,7 +16,7 @@ def legend(self):
         if not color_change.dc.empty and not color_change.ds.empty:
             unique_lithologies = self.cleaned_df[self.selected_column.strip().lower()].unique()
             
-            from color_change import column_to_use
+            from .color_change import column_to_use
             unique_shapes = self.cleaned_df[column_to_use.strip().lower()].unique()
     
             # For lithologies

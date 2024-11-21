@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, IntVar
 from tkinter import *
 from customtkinter import CTkImage
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -39,7 +40,10 @@ class class3d:
 
     def plot_3d(self):
         # Create button for displaying 3D PCA biplot
-        pil_image = Image.open("src/minexai/images/images_program/cube-3d-svgrepo-com.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "cube-3d-svgrepo-com.png")
+        pil_image = Image.open(image_path)
+
         # resized_image = pil_image.resize((32, 32), Image.LANCZOS)
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
         
@@ -151,34 +155,22 @@ class class3d:
         # Plot the points with shapes and colors
         element_size = self.size_combo.get()
         self.shapes = []
+        from .color_change import column_to_use
         if element_size == "N/A":
-            if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+            if column_to_use is not None:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], c=color_change.dc['Color'][i], marker=color_change.ds["Shapes"][i])
                     self.shapes.append(shape)
 
                 self.dots = self.ax.scatter3D(xdata, ydata, zdata, c=color_change.dc['Color'])
 
-            elif "lithology" in self.cleaned_df.columns:
+            else:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], c=color_change.dc['Color'][i])
                     self.shapes.append(shape)
                     
                 self.dots = self.ax.scatter3D(xdata, ydata, zdata, c=color_change.dc['Color'])                        
 
-            elif "rock unit" in self.cleaned_df.columns:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], marker=color_change.ds["Shapes"][i])
-                    self.shapes.append(shape)
-                    
-                self.dots = self.ax.scatter3D(xdata, ydata, zdata)                        
-
-            else:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i])
-                    self.shapes.append(shape)
-                    
-                self.dots = self.ax.scatter3D(xdata, ydata, zdata)
         else:
             # Try to get element_size column values for size mapping
             self.max_ele = self.df[element_size].max()
@@ -204,44 +196,30 @@ class class3d:
             if element_size == 'Zn_ppm':
                 sizes = self.df[element_size].apply(size_for_zn)
             else:
-                print("?")
+                # print("?")
                 sizes = self.df[element_size].apply(lambda x: map_size(x, 20, 100))
 
-            if "lithology" in self.cleaned_df.columns and "rock unit" in self.cleaned_df.columns:
+            if column_to_use is not None:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], c=color_change.dc['Color'][i], marker=color_change.ds["Shapes"][i], s=sizes[i]
                     )
                     self.shapes.append(shape)   
                 self.dots = self.ax.scatter3D(xdata, ydata, zdata, c=color_change.dc['Color'], s=sizes)
 
-            elif "lithology" in self.cleaned_df.columns:
+            else:
                 for i in range(len(self.df)):
                     shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], c=color_change.dc['Color'][i], s=sizes[i]
                     )
                     self.shapes.append(shape)
                 self.dots = self.ax.scatter3D(xdata, ydata, zdata, c=color_change.dc['Color'], s=sizes)   
 
-            elif "rock unit" in self.cleaned_df.columns:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], marker=color_change.ds["Shapes"][i], s=sizes[i]
-                    )
-                    self.shapes.append(shape)
-                self.dots = self.ax.scatter3D(xdata, ydata, zdata, s=sizes)
-                    
-            else:
-                for i in range(len(self.df)):
-                    shape = self.ax.scatter3D(xdata[i], ydata[i], zdata[i], s=sizes[i])
-                    
-                    self.shapes.append(shape)
-                self.dots = self.ax.scatter3D(xdata, ydata, zdata, s=sizes)
-
         # Plot trendlines if selected
         def plot_trendlines_3d():
             trendline = self.var2.get() == 1
-            if trendline and 'lithology' in self.cleaned_df.columns:
+            if trendline:
                 from mpl_toolkits.mplot3d import Axes3D
                 from sklearn.linear_model import LinearRegression
-                lithology_groups = self.cleaned_df.groupby('lithology')
+                lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
                     x = self.pca_df_scaled.loc[group.index, pc1]
                     y = self.pca_df_scaled.loc[group.index, pc2]

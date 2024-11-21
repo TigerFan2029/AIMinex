@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, IntVar
 from tkinter import *
 from customtkinter import CTkImage
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,7 +31,10 @@ class drill_class:
 
     def Graph_PCA(self):
         # Load and resize the image for the button icon
-        pil_image = Image.open("src/minexai/images/images_program/drill-svgrepo-com.png")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(script_dir, "images", "images_program", "drill-svgrepo-com.png")
+        pil_image = Image.open(image_path)
+
         self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
 
         # Create a label with the icon and bind a click event to it

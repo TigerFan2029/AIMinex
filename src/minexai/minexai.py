@@ -38,11 +38,14 @@ class MainApp(ctk.CTk):
         super().__init__()
         self.title("MinexAI")
         #setting logo
+        logo_dir = os.path.dirname(os.path.abspath(__file__))
         if platform.system() == 'Windows':
-            self.iconbitmap('src/minexai/images/images_program/logo.ico')
+            logo_path = os.path.join(logo_dir, 'images', 'images_program', 'logo.ico')
+            self.iconbitmap(logo_path)
         else:
-            icon = tk.PhotoImage(file='src/minexai/images/images_program/logo.png')
-            self.iconphoto(False, icon)
+            logo_path = os.path.join(logo_dir, 'images', 'images_program', 'logo.png')
+            logo = tk.PhotoImage(file=logo_path)
+            self.iconphoto(False, logo)
 
         ctk.set_appearance_mode("Light")
         style = ttk.Style()
@@ -688,11 +691,6 @@ class MainApp(ctk.CTk):
         self.instance2d = Cluster2DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
         self.instance3d = Cluster3DPlotClass(self.shared_container, self.cluster, self.df_c, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.legend_frame, self.selected_column)
         self.loading_cluster_instance = loading_cluster(self.shared_container, self.cluster, self.loadings, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
-        if "sample id" in self.cleaned_df.columns:
-            self.sample_cluster_instance = sample_cluster(self.shared_container, self.cluster, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
-        else:
-            print("Column Sample ID not in data frame, sample PC cluster plot plot not avaliable")
-
 
     def update_cluster(self, *arg):
         # update cluster
@@ -703,7 +701,6 @@ class MainApp(ctk.CTk):
         self.sample_cluster_instance.cluster_result = self.cluster
 
         # rerun plot_2d_cluster_sub to refresh options in box_frame_sub
-        print("clusterchanged1")
         for widget in self.box_frame_sub.winfo_children():
             if widget.winfo_name() == "size_combo":
                 self.instance3d.plot_3d_cluster_sub(self.cluster)  
@@ -736,25 +733,31 @@ class MainApp(ctk.CTk):
         class3d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
         class2d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
         supervised_learning(self.df, self.cleaned_df, self.on_button_click, self.apply_button, self.box_frame)
-        
+                    
+        column_name = self.cleaned_df.filter(like='depth').columns[0]
+        if "drillhole" in self.cleaned_df.columns and column_name in self.cleaned_df.columns:
+            drill_class(self.shared_container, self.pca_df_scaled, self.cleaned_df, self.df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
+        else:
+            print("Column Drillhole or Depth not in data frame, drill hole plot not avaliable")
+            image_button2 = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
+            image_button2.grid(row=1, column=4, sticky="w", pady=0, padx=5)
+
         if "sample id" in self.cleaned_df.columns:
             sample_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-            column_name = self.cleaned_df.filter(like='depth').columns[0]
+            self.sample_cluster_instance = sample_cluster(self.shared_container, self.cluster, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame)
 
-            if "drillhole" in self.cleaned_df.columns and column_name in self.cleaned_df.columns:
-                drill_class(self.shared_container, self.pca_df_scaled, self.cleaned_df, self.df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-            else:
-                print("Column Drillhole or Depth not in data frame, drill hole plot not avaliable")
         else:
-            print("Column Sample ID not in data frame, sample bar graph, and drill hole plot not avaliable")
+            print("Column Sample ID not in data frame, sample bar graph, and sample cluster bar graph not avaliable")
             
-            pil_image = Image.open("images/images_program/blank.png")
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(script_dir, "images", "images_program", "blank.png")
+            pil_image = Image.open(image_path)
             self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
     
-            self.image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
-            self.image_button1 = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
-            self.image_button.grid(row=3, column=1, sticky="w", pady=0, padx=5)
-            self.image_button1.grid(row=1, column=1, sticky="w", pady=0, padx=5)
+            image_button = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
+            image_button1 = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
+            image_button.grid(row=3, column=1, sticky="w", pady=0, padx=5)
+            image_button1.grid(row=1, column=1, sticky="w", pady=0, padx=5)
 
             
         self.save_pc_menu.entryconfig("Save PC by element excel", state=tk.NORMAL)
@@ -787,8 +790,13 @@ class MainApp(ctk.CTk):
 
 
 def main():
-    app = MainApp()
-    app.mainloop()
+    try:
+        app = MainApp()
+        app.mainloop()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()
