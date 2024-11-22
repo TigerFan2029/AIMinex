@@ -98,8 +98,6 @@ def open_color_window(self):
     self.color_window = tk.Toplevel(self)
     self.color_window.title("Edit Colors")
 
-    print(f"cleaned_df{self.cleaned_df}")
-
     # Combobox to select the column for shape mapping
     column_label = ctk.CTkLabel(self.color_window, text="Define shape by")
     column_label.grid(row=0, column=4, padx=10, pady=10)

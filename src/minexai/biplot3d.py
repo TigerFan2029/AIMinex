@@ -196,7 +196,6 @@ class class3d:
             if element_size == 'Zn_ppm':
                 sizes = self.df[element_size].apply(size_for_zn)
             else:
-                # print("?")
                 sizes = self.df[element_size].apply(lambda x: map_size(x, 20, 100))
 
             if column_to_use is not None:

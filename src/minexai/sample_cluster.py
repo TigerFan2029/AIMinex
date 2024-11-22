@@ -118,20 +118,16 @@ class sample_cluster:
             pass
 
         if self.cluster_result == "Hierarchical":
-            print("Hierarchical Clustering Selected")  # Debug print
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="Linkage Type:")
             self.linkage_box.grid(columnspan=2, row=2, column=0, pady=(3,0), padx=5)
             self.param_text.grid(columnspan=2, row=1, column=0, pady=(5,0), padx=5)
             
         elif self.cluster_result == "Spectral":
-            print("Spectral Clustering Selected")  # Debug print
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="Affinity Type:")
             self.affinity_box.grid(columnspan=2, row=2, column=0, pady=(3,0), padx=5)
             self.param_text.grid(columnspan=2, row=1, column=0, pady=(5,0), padx=5)
     
         elif self.cluster_result == "DBSCAN":
-            print("DBSCAN Clustering Selected")  # Debug print
-            # self.runeps() 
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="eps & min_sample value:")
 
             self.eps_text.grid(row=3, column=0, pady=0, padx=(5,0), sticky="w")

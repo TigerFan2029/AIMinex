@@ -22,7 +22,7 @@ def legend(self):
             # For lithologies
             handle1 = []
             label1 = []
-            print (f"color_map{color_change.color_map}")
+            #print (f"color_map{color_change.color_map}")
             for lithology in unique_lithologies:
                 color = color_change.color_map[lithology.title()]
                 l1 = Line2D([], [], color=color, marker='o', linestyle='None', label=lithology)
@@ -32,7 +32,7 @@ def legend(self):
             # For shapes
             handle2 = []
             label2 = []
-            print (f"color_map1{color_change.color_map1}")
+            #print (f"color_map1{color_change.color_map1}")
             for shape in unique_shapes:
                 str(shape).strip().lower()
                 marker = color_change.color_map1[shape]
@@ -46,8 +46,6 @@ def legend(self):
 
             if fig_height < 3.15:
                 fig_height = 3.15
-            
-            print(f"fig_height{fig_height}")
     
             figx = plt.figure(figsize=(3, fig_height), constrained_layout=True)
             axx = figx.add_subplot(111)

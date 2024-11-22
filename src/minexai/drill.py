@@ -135,7 +135,7 @@ class drill_class:
             return
 
         # Calculate y positions for depth markers
-        print(depths)
+        #print(depths)
         max_depth = max(depths)
         min_depth = min(depths)
         if max_depth == min_depth:
