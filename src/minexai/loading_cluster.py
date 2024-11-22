@@ -92,7 +92,7 @@ class loading_cluster:
         self.affinity_box = ttk.Combobox(self.box_frame_sub, values=affinity_box_values, state="readonly")
         self.affinity_box.current(0)
                 
-        self.min_sample_box = CTkSpinbox(self.box_frame_sub, step_size=1, min_value=2, max_value=100, width = 110) #, command=self.runeps)
+        self.min_sample_box = CTkSpinbox(self.box_frame_sub, step_size=1, min_value=2, max_value=100, width = 110)
         self.eps_box = CTkSpinbox(self.box_frame_sub, step_size=0.1, min_value=0.1, max_value=100, width = 110)
                     
         self.eps_text = ctk.CTkLabel(self.box_frame_sub, text="eps")
@@ -118,20 +118,16 @@ class loading_cluster:
             pass
 
         if self.cluster_result == "Hierarchical":
-            print("Hierarchical Clustering Selected")  # Debug print
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="Linkage Type:")
             self.linkage_box.grid(columnspan=2, row=2, column=0, pady=(3,0), padx=5)
             self.param_text.grid(columnspan=2, row=1, column=0, pady=(5,0), padx=5)
             
         elif self.cluster_result == "Spectral":
-            print("Spectral Clustering Selected")  # Debug print
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="Affinity Type:")
             self.affinity_box.grid(columnspan=2, row=2, column=0, pady=(3,0), padx=5)
             self.param_text.grid(columnspan=2, row=1, column=0, pady=(5,0), padx=5)
     
         elif self.cluster_result == "DBSCAN":
-            print("DBSCAN Clustering Selected")  # Debug print
-            # self.runeps() 
             self.param_text = ctk.CTkLabel(self.box_frame_sub, text="eps & min_sample value:")
 
             self.eps_text.grid(row=3, column=0, pady=0, padx=(5,0), sticky="w")
