@@ -31,7 +31,7 @@ from .legend import legend
 from .plot_yellowbrick import yellowbrick
 
 class Cluster3DPlotClass:
-    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame):
+    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame, selected_column):
         # Initialize class variables
         self.df = df.dropna()
         self.shared_container = shared_container
@@ -41,7 +41,7 @@ class Cluster3DPlotClass:
         self.legend_frame = legend_frame
         self.cleaned_df = cleaned_df
         self.on_button_click = on_button_click
-
+        self.selected_column = selected_column
         self.var = IntVar()
         self.var1 = IntVar()
 
