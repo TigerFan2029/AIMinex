@@ -207,7 +207,7 @@ class MainApp(ctk.CTk):
     def open_help_html(self):
         import urllib.parse
         # Open HTML help file
-        html_path = 'src/minexai/_build/html/index.html'
+        html_path = 'doc/_build/html/index.html'
         absolute_path = os.path.abspath(html_path)
         file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(absolute_path))
         print(f"Opening HTML file at: {file_url}")
