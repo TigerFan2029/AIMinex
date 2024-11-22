@@ -32,12 +32,13 @@ from .legend import legend
 from .plot_yellowbrick import yellowbrick
 
 class Cluster2DPlotClass:
-    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame):
+    def __init__(self, shared_container, cluster, df, cleaned_df, box_frame, box_frame_sub, on_button_click, legend_frame, selected_column):
         # Initialize the 2D cluster plot class with required parameters
         self.df = df.dropna()
         self.shared_container = shared_container
         self.box_frame = box_frame
         self.box_frame_sub = box_frame_sub
+        self.selected_column = selected_column
 
         self.on_button_click = on_button_click
         self.legend_frame = legend_frame
