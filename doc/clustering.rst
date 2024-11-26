@@ -1,25 +1,40 @@
 Types of Clustering Methods
 ===========================
-| K-means Clustering
+K-means Clustering
+---------------------------
 | K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 
-| Hierarchical Clustering
+Hierarchical Clustering
+---------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | Hierarchical clustering builds a dendrogram to represent the tendency to concentrate data points gradually. There are two main types: agglomerative (bottom-up) and divisive (top-down). In the agglomerative approach used in the MineralAI program, for every data point, a new cluster is created (that means, each data point is a cluster), and clusters are merged iteratively until the tree ends. This method is capable of capturing hierarchies, but it is highly computationally expensive for big datasets.
 
-| DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+-----------------------------------------------------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | DBSCAN is a clustering method based on density group data points according to the density area of the data points. Its clusters are areas of high densities, separated by regions of low densities; thus, it can find clusters of arbitrary shape and handle noise (outliers) efficiently. The algorithm requires two parameters: the radius ϵ\epsilonϵ to define the neighbourhood of a point and the minimum number of points required to form a dense region. It does not require specifying the number of clusters in advance.
 
-| Mean Shift Clustering
+Mean Shift Clustering
+---------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | Mean Shift clustering is a non-parametric method that searches for dense regions in the feature space. It works by iteratively shifting each data point towards the mode (highest density point) within a defined window until convergence. The resulting clusters are areas where the points converge. This method can automatically detect the number of clusters and is suitable for arbitrary-shaped clusters but can be computationally intensive for large datasets.
 
-| Spectral Clustering
+Spectral Clustering
+---------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | Spectral clustering uses the eigenvalues of a similarity matrix to reduce the dimensionality of the data before applying a clustering method like K-means. It is effective for detecting non-convex clusters and clusters connected by complex relationships. The method involves constructing a similarity graph, computing the graph's Laplacian matrix, and then using its eigenvectors for clustering. 
 
-| Gaussian Mixture Models (GMM)
+Gaussian Mixture Models (GMM)
+--------------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | The Gaussian mixture model is a soft clustering technique to determine the probability that a given data point belongs to a cluster. It is a probabilistic model that assumes the data is generated from a mixture of several Gaussian distributions with unknown parameters. Each cluster is represented by a Gaussian distribution, and the model estimates the parameters using the Expectation-Maximization (EM) algorithm. GMM can handle clusters with different shapes and sizes but requires specifying the number of components (clusters).
 
-| Affinity Propagation
+Affinity Propagation
+---------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | Affinity Propagation clustering does not require specifying the number of clusters beforehand. Instead, it identifies a set of representative points (exemplars) by iteratively passing messages between data points. These messages reflect the suitability of points and their preference to be exemplars. The method is effective for detecting clusters of various shapes and sizes but can be computationally heavy.
 
-| BIRCH (Balanced Iterative Reducing and Clustering using Hierarchies)
+BIRCH (Balanced Iterative Reducing and Clustering using Hierarchies)
+----------------------------------------------------------------------
+| K-means clustering organizes a dataset into k clusters by using the nearest means. K-means clustering starts by randomly initializing k-cluster centroids, then the data points are assigned to the closest cluster centroid, and the centroids of all clusters are recalculated based on the mean of the assigned points. Two steps are iteratively performed until the changes to the centroids become insignificant or a limit of iterations is reached. K-means is well suited for large datasets, but it is possible that it will be frozen at a local minimum.
 | BIRCH is a hierarchical clustering method designed for very large datasets. It clusters multi-dimensional metric data points to create a clustering feature tree (CF tree) that summarizes the dataset. The algorithm uses these features to form clusters by iteratively refining the tree and clustering the leaf nodes. BIRCH is efficient and scalable, handling large datasets well, but it may not perform as effectively on datasets with clusters of varying densities.
