@@ -183,7 +183,7 @@ class MainApp(ctk.CTk):
 
         # Create help menu options
         helpmenu = Menu(menubar, tearoff=0)
-        helpmenu.add_command(label="Help Index", command=self.open_help_html)
+        helpmenu.add_command(label="User Manual", command=self.open_help_html)
         helpmenu.add_separator()
         helpmenu.add_command(label="Short-Cuts:", command=None)
         helpmenu.add_command(label="Deselect_all", command=None, accelerator="Cmd+d")
