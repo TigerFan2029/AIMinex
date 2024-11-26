@@ -236,7 +236,7 @@ class MainApp(ctk.CTk):
             self.output_text.insert("end", "File loaded successfully. Please select a sheet.\n")
 
         except:
-            self.output_text.insert("end", f"Error loading file: \n")
+            self.output_text.insert("end", "Error loading file: \n")
 
     def load_selected_sheet(self):
         #initialize tab function

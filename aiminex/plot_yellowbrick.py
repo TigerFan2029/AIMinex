@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import *
 from yellowbrick.cluster import KElbowVisualizer  
 from .custom_toolbar import CustomToolbar
 import matplotlib.pyplot as plt

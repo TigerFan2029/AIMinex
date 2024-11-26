@@ -190,7 +190,7 @@ def open_color_window(self):
     }
     
     # Define the reverse mapping (symbols to names) for setting the default value
-    symbol_to_shape_name = {v: k for k, v in shape_name_to_symbol.items()}
+    #symbol_to_shape_name = {v: k for k, v in shape_name_to_symbol.items()}
     
     self.shape_index = self.cleaned_df[column_to_use].unique()
     # # Rock Units Section

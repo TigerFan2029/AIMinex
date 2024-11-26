@@ -213,7 +213,7 @@ class class2d:
             # Plot trendlines for lithology groups
             trendline = self.var2.get() == 1
             if trendline: #and 'lithology' in self.cleaned_df.columns:
-                import statsmodels.api as sm
+                #import statsmodels.api as sm
                 lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
                     x = self.pca_df_scaled.loc[group.index, pc1]

@@ -215,7 +215,7 @@ class class3d:
         def plot_trendlines_3d():
             trendline = self.var2.get() == 1
             if trendline:
-                from mpl_toolkits.mplot3d import Axes3D
+                #from mpl_toolkits.mplot3d import Axes3D
                 from sklearn.linear_model import LinearRegression
                 lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
@@ -359,7 +359,7 @@ class class3d:
         ys = scale * self.loadings[pc2]
         zs = scale * self.loadings[pc3]
 
-        plt.title(f'3D Biplot')
+        plt.title('3D Biplot')
 
         self.ax.set_xlabel(pc1)
         self.ax.set_ylabel(pc2)

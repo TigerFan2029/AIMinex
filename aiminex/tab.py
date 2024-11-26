@@ -1,7 +1,5 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import *
-
 
 class SharedContainer:
     def __init__(self, parent):

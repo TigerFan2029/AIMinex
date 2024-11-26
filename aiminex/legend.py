@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import *
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from . import color_change
