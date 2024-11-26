@@ -1,4 +1,0 @@
-How to Install
-===============
-1. In the terminal, pip install MinexAI
-2. In the terminal, type MinexAI to run the program.
