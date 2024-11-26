@@ -17,12 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'MineralAI'
-copyright = '2024, Hom Nath Gharti, Tiger Fan'
+project = 'AIMinex'
+copyright = '2024, Digital Earth Science and Engineering Lab'
 author = 'Hom Nath Gharti, Tiger Fan'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -52,4 +52,4 @@ html_theme = 'alabaster'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']

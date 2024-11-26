@@ -4,14 +4,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="MinexAI",
+    name="AIMinex",
     version="0.0.1",
-    description="MinexAI is a Graphing and Machine Learning Program designed to handle elemental data",
+    description="AIMinex is a Graphing and Machine Learning Program designed to handle elemental data",
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     include_package_data=True,
     package_data={
-        'minexai': [
+        'aiminex': [
             'images/*.*',
             '_build/*.*',
         ],
@@ -45,7 +45,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'minexai=minexai.minexai:main',
+            'aiminex=aiminex.aiminex:main',
         ],
     },
 )
