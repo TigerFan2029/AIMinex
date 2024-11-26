@@ -78,6 +78,7 @@ class SharedContainer:
 
         content_frame.pack(fill='both', expand=True)
         self.current_tab = (tab_frame, content_frame)
+        content_frame.update_idletasks()
 
     def close_tab(self, tab_frame, content_frame):
         # Close the selected tab and select the previous tab if available

@@ -21,30 +21,54 @@ class PCA_class:
 
     def perform_pca(self):
         # Perform scaling and PCA based on selected options
-        if self.scaler_combo.get() == "Standard Scaler":
-            scaling = StandardScaler()
-        elif self.scaler_combo.get() == "Logarithmic Scaler":
-            scaling = FunctionTransformer(np.log10, validate=True)
         try:
-            scaling.fit(self.df)
-            self.Scaled_data = scaling.transform(self.df)
-            
             pca_type = self.pca_type_combo.get()
-            kernel_type = self.kernel_combo.get()
             if pca_type == "PCA":
+                if self.scaler_combo.get() == "Standard Scaler":
+                    scaling = StandardScaler()
+                elif self.scaler_combo.get() == "Logarithmic Scaler":
+                    scaling = FunctionTransformer(np.log10, validate=True)
+                else:
+                    raise ValueError("Invalid scaler selected")
+                
+                scaling.fit(self.df)
+                self.Scaled_data = scaling.transform(self.df)
+                
                 self.pca = PCA(n_components=int(self.slider.get()))
+                self.pca.fit(self.Scaled_data)
+                self.x = self.pca.transform(self.Scaled_data)
+            
             elif pca_type == "Kernel PCA":
-                self.pca = KernelPCA(n_components=int(self.slider.get()), kernel=kernel_type, gamma=self.gamma, degree=self.degree, coef0=self.coef)
+                kernel_type = self.kernel_combo.get()
+                
+                if self.scaler_combo.get() == "Standard Scaler":
+                    scaling = StandardScaler()
+                elif self.scaler_combo.get() == "Logarithmic Scaler":
+                    scaling = FunctionTransformer(np.log10, validate=True)
+                else:
+                    raise ValueError("Invalid scaler selected")
+                
+                scaling.fit(self.df)
+                self.Scaled_data = scaling.transform(self.df)
+                
+                self.pca = KernelPCA(
+                    n_components=int(self.slider.get()),
+                    kernel=kernel_type,
+                    gamma=self.gamma,
+                    degree=self.degree,
+                    coef0=self.coef
+                )
+                self.pca.fit(self.Scaled_data)
+                self.x = self.pca.transform(self.Scaled_data)
+            
             else:
                 raise ValueError("Invalid PCA type selected")
-                
-            self.pca.fit(self.Scaled_data)
-            self.x = self.pca.transform(self.Scaled_data)
-    
+            
             self.create_pca_df()
-         
+        
         except Exception as e:
-            raise ValueError(f'Not enough components for PCA. Please select more!{e}') from e
+            self.output_text.insert("end", f'Error during PCA: {e}\n')
+            raise
 
     def create_pca_df(self):  
         # Create a DataFrame for the PCA results

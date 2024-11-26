@@ -274,7 +274,7 @@ class MainApp(ctk.CTk):
         if valid_columns:
             ctk.CTkLabel(self.selection_frame, text="Filter by:").grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=(5,0))
             self.selected_column_combobox = ctk.CTkComboBox(self.selection_frame, values=valid_columns, state="readonly", command = self.update_listbox)
-            self.selected_column_combobox.grid(row=0, column=2, columnspan=3, sticky="we", padx=5, pady=(5,0))
+            self.selected_column_combobox.grid(row=0, column=2, columnspan=2, sticky="we", padx=5, pady=(5,0))
             self.selected_column_combobox.set(valid_columns[0])
 
         else:
@@ -335,9 +335,9 @@ class MainApp(ctk.CTk):
         self.label.grid(row=10, column=0, columnspan=4, padx=5, pady=0)
 
         # initiate widgets for kernal parameters
-        self.gamma_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=1, width=120, command=self.gamma_change)
-        self.degree_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=10, width=120, command=self.degree_change)
-        self.coef_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=10, width=120, command=self.coef_change)
+        self.gamma_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=1, width=100, command=self.gamma_change)
+        self.degree_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=10, width=100, command=self.degree_change)
+        self.coef_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=10, width=100, command=self.coef_change)
         
         self.label1 = ctk.CTkLabel(self.selection_frame, text=f"Gamma: {self.gamma_slider.get():.2f}")
         self.label2 = ctk.CTkLabel(self.selection_frame, text=f"Degree: {self.degree_slider.get():.2f}")
@@ -360,7 +360,7 @@ class MainApp(ctk.CTk):
         self.label3.configure(text=f"Coef: {self.coef:.2f}")
         
         # kernel combobox
-        self.kernel_combo = ctk.CTkComboBox(self.selection_frame, values=["linear", "poly", "rbf", "sigmoid", "cosine", "precomputed"], command=self.kernel_param, state="readonly")
+        self.kernel_combo = ctk.CTkComboBox(self.selection_frame, values=["linear", "poly", "rbf", "sigmoid", "cosine"], command=self.kernel_param, state="readonly")
         self.kernel_text = ctk.CTkLabel(self.selection_frame, text="Kernel:")
         self.kernel_combo.set("linear")
 
@@ -401,8 +401,8 @@ class MainApp(ctk.CTk):
             self.gamma_slider.grid(row=5, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
             self.label1.grid(row=5, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
             
-            self.coef_slider.grid(row=5, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label3.grid(row=5, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.coef_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label3.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
 
         else:
             pass
@@ -605,20 +605,25 @@ class MainApp(ctk.CTk):
     def perform_pca(self):
         # Perform PCA and update output
         try:
+            print (f"gamma {self.gamma}")
+            print (f"degree {self.degree}")
+            print (f"coef {self.coef}")
             self.pca_instance = PCA_class(self.df, self.scaler_combo, self.pca_type_combo, self.output_text, self.slider, self.kernel_combo, self.gamma, self.degree, self.coef)
+            print("1")
             self.pca_instance.get_variance_ratio()
+            print("2")
             self.output_text.insert("end", f"PCA performed successfully. Shape of transformed data: {self.pca_instance.x.shape}\n")
             color_change.color_function(self)
             color_change.shape_map(self)
             self.editmenu.entryconfig("Edit Data Point Color/Shape", state="normal")
-            self.expand_buttons()
+            self.group_titles()
             self.loading_graph()   
             self.terminal.register_to_scope('pca_instance', self.pca_instance)
             
-        except ValueError as e:
+        except Exception as e:
             self.output_text.insert("end", f"{e}\n")
 
-    def expand_buttons(self):
+    def group_titles(self):
         # Create labels for PCA and Cluster Analysis sections
         self.pca_list = ctk.CTkLabel(self.box_frame, text="PCA Analysis Graphs")
         self.pca_list.grid(row=0, column=0, columnspan=6, sticky="w", pady=(10,0), padx=5)

@@ -165,7 +165,7 @@ class loading_class:
                 self.plot_pc_barchart(combined_data, f'PC{i+1}', axes[i], sort=False, group_indices=group_indices)
 
         # Adjust layout and add colorbar
-        fig.suptitle('PC Bar-Graph by Elements')
+        fig.suptitle('PC Bar-Graphs by Elements')
 
         #fig.subplots_adjust(bottom=0.25, top=0.90, hspace=0.3)
         plt.tight_layout(rect=[0, 0.05, 1, 1])
