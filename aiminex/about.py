@@ -11,7 +11,7 @@ def show_about():
     
     # Set the size of the About win
     win_w = 400
-    win_h = 350
+    win_h = 370
     about_win.geometry(f"{win_w}x{win_h}")
 
     # Center the win on the screen
@@ -46,7 +46,7 @@ def show_about():
     title_label = ctk.CTkLabel(about_win, text="AIMinex", font=bold_font)
     title_label.pack(pady=(10, 5))
 
-    version_label = ctk.CTkLabel(about_win, text="Version 1.0", font=normal_font)
+    version_label = ctk.CTkLabel(about_win, text="Version 1.0.0", font=normal_font)
     version_label.pack()
     description = "An Open-Source, Cross-Platform GUI for Geochemical and Mineral Exploration Data Analysis and Visualization Using AI."
     description_label = ctk.CTkLabel(about_win, text=description, font=normal_font,wraplength=300)
