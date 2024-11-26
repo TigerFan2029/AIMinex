@@ -1,7 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk, IntVar
-from tkinter import *
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 

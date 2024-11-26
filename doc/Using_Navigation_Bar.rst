@@ -1,6 +1,6 @@
 Using Navigation Bar
 ====================
-| The Navigation Bar is located at the top of each graph and comprises various functions including saving graphs, zooming, and moving.
+| The Navigation Bar is located at the top of each graph and comprises various functions, including saving graphs, zooming, and moving.
 
 Note: The Navigation Bar used in this program is from `NavigationToolbar2Tk <https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/backends/_backend_tk.py>`_.
 

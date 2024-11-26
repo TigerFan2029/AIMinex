@@ -103,10 +103,17 @@ class class3d:
         for names in self.df.columns.tolist():
             self.multiselect_3d.insert(tk.END, names)
 
+        # Select all items in the listbox
+        def select_all():
+            self.multiselect_3d.selection_set(0, tk.END)       
+            
         # Deselect all items in the listbox
         def deselect_all():
             self.multiselect_3d.selection_clear(0, tk.END)
 
+        self.multiselect_3d.bind('<Command-a>', lambda event: select_all())
+        self.multiselect_3d.bind('<Control-a>', lambda event: select_all())
+        
         self.multiselect_3d.bind('<Command-d>', lambda event: deselect_all())
         self.multiselect_3d.bind('<Control-d>', lambda event: deselect_all())
 
@@ -215,7 +222,7 @@ class class3d:
         def plot_trendlines_3d():
             trendline = self.var2.get() == 1
             if trendline:
-                from mpl_toolkits.mplot3d import Axes3D
+                #from mpl_toolkits.mplot3d import Axes3D
                 from sklearn.linear_model import LinearRegression
                 lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
@@ -359,7 +366,7 @@ class class3d:
         ys = scale * self.loadings[pc2]
         zs = scale * self.loadings[pc3]
 
-        plt.title(f'3D Biplot')
+        plt.title('3D Biplot')
 
         self.ax.set_xlabel(pc1)
         self.ax.set_ylabel(pc2)

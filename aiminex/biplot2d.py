@@ -105,9 +105,17 @@ class class2d:
             self.multiselect_2d.insert(tk.END, names)
             
         # Function to deselect all items in the listbox
+        def select_all():
+            self.multiselect_2d.selection_set(0, tk.END)
+            
+        # Function to deselect all items in the listbox
         def deselect_all():
             self.multiselect_2d.selection_clear(0, tk.END)
 
+        # Bind Command-d (select all) to the listbox
+        self.multiselect_2d.bind('<Command-a>', lambda event: select_all())
+        self.multiselect_2d.bind('<Control-a>', lambda event: select_all())
+        
         # Bind Command-d (deselect all) to the listbox
         self.multiselect_2d.bind('<Command-d>', lambda event: deselect_all())
         self.multiselect_2d.bind('<Control-d>', lambda event: deselect_all())
@@ -213,7 +221,7 @@ class class2d:
             # Plot trendlines for lithology groups
             trendline = self.var2.get() == 1
             if trendline: #and 'lithology' in self.cleaned_df.columns:
-                import statsmodels.api as sm
+                #import statsmodels.api as sm
                 lithology_groups = self.cleaned_df.groupby(self.selected_column.lower())
                 for name, group in lithology_groups:
                     x = self.pca_df_scaled.loc[group.index, pc1]

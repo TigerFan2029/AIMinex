@@ -1,9 +1,8 @@
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import IntVar
-from tkinter import *
 from customtkinter import CTkImage
-import os
+#import os
 
 import numpy as np
 import matplotlib.pyplot as plt

@@ -110,16 +110,17 @@ class Cluster3DPlotClass:
         # Add checkbox for displaying shapes if ds is not empty
         if not color_change.ds.empty:
             self.checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Display shape", variable=self.var)
-            self.checkbox.grid(columnspan=2,row=8, column=0, sticky="w", pady=(5,0), padx=5)
+            self.checkbox.grid(columnspan=2,row=8, column=0, sticky="W", pady=(5,0), padx=5)
 
         self.legend_checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Show Legend", variable=self.var1)
-        self.legend_checkbox.grid(columnspan=2,row=9, column=0, sticky="w", pady=(5,0), padx=5)
+        self.legend_checkbox.grid(columnspan=2,row=9, column=0, sticky="W", pady=(5,0), padx=5)
         
         # Add checkbox for coloring by cluster if dc is not empty
         if not color_change.dc.empty:
             self.color_checkbox_var = IntVar()
             self.color_checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Color by Cluster", variable=self.color_checkbox_var)
-            self.color_checkbox.grid(columnspan=2,row=10, column=0, sticky="w", pady=(5,0), padx=5)
+
+            self.color_checkbox.grid(columnspan=2,row=10, column=0, sticky="W", pady=(5,0), padx=5)
 
         # Add slider for selecting the number of clusters
         self.cluster_text = ctk.CTkLabel(self.box_frame_sub, text="Number of Clusters:")

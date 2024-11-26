@@ -17,7 +17,7 @@ Program Tutorial
 
 4.  Select Lithologies (if applicable), PCA Scaler, PCA/Kernel PCA, and Number of PC components, before pressing Apply.
 
-   # When kernel PCA is selected, options for parameters might vary depending on the type of kernel selected,  for more details navigate to :doc:`PCA vs KernelPCA <pca>`.
+   # When kernel PCA is selected, options for parameters might vary depending on the type of kernel selected. For more details, navigate to :doc:`PCA vs KernelPCA <pca>`.
 
  .. image:: ../images/doc/step3.png
     :width: 100%

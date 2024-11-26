@@ -1,11 +1,10 @@
 import customtkinter as ctk
-from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-import os
+#import os
 
 from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC

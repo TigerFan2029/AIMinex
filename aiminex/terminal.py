@@ -137,7 +137,8 @@ class MATerminal:
                 exec(code_obj, self.interpreter.locals)
             except Exception as e:
                 # Catch exceptions during the execution and print them
-                error_message = traceback.format_exc()
+                #error_message = traceback.format_exc()
+                error_message = f"Exception occurred: {str(e)}\n{traceback.format_exc()}"
                 self.write(error_message)
     
             # If the command is an expression, evaluate and print its result
@@ -148,6 +149,8 @@ class MATerminal:
                     if result is not None:
                         self.write(f"{result}\n")
                 except Exception as e:
+                    error_message = f"Exception occurred: {str(e)}\n{traceback.format_exc()}"
+                    self.write(error_message)
                     pass
                     
         except Exception as e:
