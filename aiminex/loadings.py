@@ -60,10 +60,18 @@ class loading_class:
             self.elements_listbox.insert(tk.END, element)
         self.elements_listbox.pack(side="top", padx=5, pady=5)
 
+        # Function to select all elements
+        def select_all():
+            self.elements_listbox.selection_set(0, tk.END)
+            
         # Function to deselect all elements
         def deselect_all():
             self.elements_listbox.selection_clear(0, tk.END)
 
+        # Bind select function to the listbox
+        self.elements_listbox.bind('<Command-a>', lambda event: select_all())
+        self.elements_listbox.bind('<Control-a>', lambda event: select_all())
+        
         # Bind deselect function to the listbox
         self.elements_listbox.bind('<Command-d>', lambda event: deselect_all())
         self.elements_listbox.bind('<Control-d>', lambda event: deselect_all())
@@ -171,7 +179,8 @@ class loading_class:
         max_val = self.loadings.max().max()
         norm = plt.Normalize(vmin=min_val, vmax=max_val)
         cmap = plt.cm.coolwarm
-        cbar = fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
+        #cbar = fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
+        fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
         
         # Add the plot to the tkinter canvas
         canvas = FigureCanvasTkAgg(fig, master=content_frame)

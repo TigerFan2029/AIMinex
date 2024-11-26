@@ -103,10 +103,17 @@ class class3d:
         for names in self.df.columns.tolist():
             self.multiselect_3d.insert(tk.END, names)
 
+        # Select all items in the listbox
+        def select_all():
+            self.multiselect_3d.selection_set(0, tk.END)       
+            
         # Deselect all items in the listbox
         def deselect_all():
             self.multiselect_3d.selection_clear(0, tk.END)
 
+        self.multiselect_3d.bind('<Command-a>', lambda event: select_all())
+        self.multiselect_3d.bind('<Control-a>', lambda event: select_all())
+        
         self.multiselect_3d.bind('<Command-d>', lambda event: deselect_all())
         self.multiselect_3d.bind('<Control-d>', lambda event: deselect_all())
 

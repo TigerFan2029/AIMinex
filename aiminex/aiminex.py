@@ -186,7 +186,8 @@ class MainApp(ctk.CTk):
         helpmenu.add_command(label="User Manual", command=self.open_help_html)
         helpmenu.add_separator()
         helpmenu.add_command(label="Short-Cuts:", command=None)
-        helpmenu.add_command(label="Deselect_all", command=None, accelerator="Cmd+d")
+        helpmenu.add_command(label="Select_all", command=None, accelerator="Ctrl+a or Cmd+a")
+        helpmenu.add_command(label="Deselect_all", command=None, accelerator="Ctrl+d or Cmd+d")
         helpmenu.add_separator()
         helpmenu.add_command(label="About...", command=show_about)
         menubar.add_cascade(label="Help", menu=helpmenu)
@@ -312,9 +313,17 @@ class MainApp(ctk.CTk):
         # Create lithology selection buttons
         self.lithology_listbox.grid(row=1, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
         
+        # Select all
+        def select_all():
+            self.lithology_listbox.selection_set(0, tk.END)
+            
         def deselect_all():
             self.lithology_listbox.selection_clear(0, tk.END)
             
+        # Bind select all to Command+A and Control+A
+        self.lithology_listbox.bind('<Command-a>', lambda event: select_all())
+        self.lithology_listbox.bind('<Control-a>', lambda event: select_all())
+        # Bind deselect all to Command+D and Control+D
         self.lithology_listbox.bind('<Command-d>', lambda event: deselect_all())
         self.lithology_listbox.bind('<Control-d>', lambda event: deselect_all())
 
