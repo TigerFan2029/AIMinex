@@ -328,10 +328,10 @@ class sample_cluster:
         self.graph_data_df = pd.concat(graph_data)
 
         # Add a big title over all subplots
-        fig.suptitle(f'{cluster_result} PC Cluster Charts by Sample IDs', fontsize=16)
+        fig.suptitle(f'{cluster_result} PC Cluster Bar-Graphs by Sample IDs', fontsize=16)
 
         # Adjust layout and display the plot
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0.05, 1, 1])
         canvas = FigureCanvasTkAgg(fig, master=content_frame)
         canvas.draw()
         toolbar = NavigationToolbar2Tk(canvas, content_frame)

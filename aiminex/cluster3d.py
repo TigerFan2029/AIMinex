@@ -119,6 +119,7 @@ class Cluster3DPlotClass:
         if not color_change.dc.empty:
             self.color_checkbox_var = IntVar()
             self.color_checkbox = ctk.CTkCheckBox(self.box_frame_sub, text="Color by Cluster", variable=self.color_checkbox_var)
+
             self.color_checkbox.grid(columnspan=2,row=10, column=0, sticky="W", pady=(5,0), padx=5)
 
         # Add slider for selecting the number of clusters

@@ -112,7 +112,10 @@ class sample_class:
             axes[i].set_yticklabels(y_tick_labels, fontsize="xx-small")
             axes[i].set_ylabel('')
 
-        plt.tight_layout()
+        # Adjust layout and add colorbar
+        fig.suptitle('PC Bar-Graphs by Sample IDs')
+
+        plt.tight_layout(rect=[0, 0.05, 1, 1])
 
         # Add the plot to the tkinter canvas
         canvas = FigureCanvasTkAgg(fig, master=content_frame)
@@ -123,3 +126,4 @@ class sample_class:
         toolbar.update()
         toolbar.pack(side=tk.TOP, fill=tk.X)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, in_=content_frame)
+

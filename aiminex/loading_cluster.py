@@ -356,9 +356,9 @@ class loading_cluster:
         self.graph_data_df = pd.concat(graph_data)
 
         # Add a big title over all subplots
-        fig.suptitle(f'{cluster_result} PC Cluster Charts by Elements', fontsize=16)
+        fig.suptitle(f'{cluster_result} PC Cluster Bar-Graphs by Elements', fontsize=16)
 
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0.05, 1, 1])
         
         # Add the plot to the tkinter canvas
         canvas = FigureCanvasTkAgg(fig, master=content_frame)

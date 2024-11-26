@@ -173,14 +173,32 @@ class loading_class:
                 self.plot_pc_barchart(combined_data, f'PC{i+1}', axes[i], sort=False, group_indices=group_indices)
 
         # Adjust layout and add colorbar
-        plt.tight_layout()
-        fig_c = plt.figure(figsize=(12, 1))
-        min_val = self.loadings.min().min()
-        max_val = self.loadings.max().max()
-        norm = plt.Normalize(vmin=min_val, vmax=max_val)
-        cmap = plt.cm.coolwarm
-        #cbar = fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
-        fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
+        fig.suptitle('PC Bar-Graphs by Elements')
+
+        #fig.subplots_adjust(bottom=0.25, top=0.90, hspace=0.3)
+        plt.tight_layout(rect=[0, 0.05, 1, 1])
+
+        # norm = plt.Normalize(vmin=self.loadings.min().min(), vmax=self.loadings.max().max())
+        # cmap = plt.cm.coolwarm
+
+        # cbar = fig.colorbar(
+        #     plt.cm.ScalarMappable(norm=norm, cmap=cmap),
+        #     ax=axes,
+        #     orientation='horizontal',
+        #     fraction=0.03,
+        #     pad=0.03
+        # )
+
+        #fig.text(0.5, 0.05, "qwetaghbvdhak", ha='center', va='center', fontsize=10)
+
+        #plt.tight_layout()
+        #fig_c = plt.figure(figsize=(12, 1))
+        #min_val = self.loadings.min().min()
+        #max_val = self.loadings.max().max()
+        #norm = plt.Normalize(vmin=min_val, vmax=max_val)
+        #cmap = plt.cm.coolwarm
+        ##cbar = fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
+        #fig_c.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axes, orientation='horizontal', fraction=0.02)
         
         # Add the plot to the tkinter canvas
         canvas = FigureCanvasTkAgg(fig, master=content_frame)
