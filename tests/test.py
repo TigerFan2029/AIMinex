@@ -1,5 +1,5 @@
 import unittest
-import aiminex
+from aiminex.aiminex import main
 from threading import Thread
 import time
 
@@ -9,7 +9,7 @@ class TestMainGUI(unittest.TestCase):
         """Test to check if the GUI starts without errors."""
         def run_gui():
             try:
-                aiminex.main()  # Start the GUI
+                main()  # Start the GUI
             except Exception as e:
                 self.fail(f"GUI failed to start with error: {e}")
         
