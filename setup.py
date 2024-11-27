@@ -67,7 +67,7 @@ setup(
     
     entry_points={
         'console_scripts': [
-            'aiminex=aiminex.aiminex:main',
+            'aiminex=main:main',
         ],
     },
 )
