@@ -1,0 +1,15 @@
+include README.md
+include LICENSE
+
+# Include all images in the images directory
+recursive-include images *
+
+# Include all Python files in aiminex and tktooltip
+recursive-include aiminex *.py
+recursive-include tktooltip *.py
+
+# Include all Excel data files in data directory
+recursive-include data *.xlsx
+
+# Include all reStructuredText (RST) files in the doc directory
+recursive-include doc *.rst
