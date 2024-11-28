@@ -35,7 +35,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/DigitalEarthScience/AIMinex",
     packages=find_packages(),  # Find all packages inside the 'AIMinex' directory
-    py_modules=['aiminex','aimgui'],
+    py_modules=['aiminex'],
     include_package_data=True,  # Include non-Python files as specified below
     package_data={  
         '': get_data_files(),  # Include images, Excel files, and other static assets
