@@ -34,12 +34,11 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/DigitalEarthScience/AIMinex",
-    packages=find_packages(where='aiminex'),  # Find all packages inside the 'aiminex' directory
+    packages=find_packages(),  # Find all packages inside the 'AIMinex' directory
+    py_modules=['aiminex','aimgui'],
     include_package_data=True,  # Include non-Python files as specified below
     package_data={  
         '': get_data_files(),  # Include images, Excel files, and other static assets
-        'aiminex': ['*.py'],   # Include Python files from the 'aiminex' folder
-        'tktooltip': ['*.py'], # Include Python files from the 'tktooltip' folder
     },        
     
     install_requires=[
@@ -60,14 +59,14 @@ setup(
     
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.10",
+    python_requires=">=3.9",
     
     entry_points={
         'console_scripts': [
-            'aiminex=main:main',
+            'aiminex=aiminex:main',
         ],
     },
 )
