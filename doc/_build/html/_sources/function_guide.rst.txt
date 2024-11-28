@@ -1,7 +1,7 @@
 Functions and Methods
 =====================
 This program offers two primary categories of plotting functions: PCA (Principal Component Analysis) and Data Clustering. There are two types of PCA (Normal and Kernel) and various clustering methods. Class prediction is also available under the Supervised Learning section.
-For more information on the differences between the PCAs and types of clustering methods please click on the links below:
+For more information on the differences between the PCAs and types of clustering methods, please click on the links below:
 
 | :doc:`PCA vs KernelPCA <pca>`, :doc:`Clustering Methods <clustering>` 
 

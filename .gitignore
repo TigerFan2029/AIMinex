@@ -1,3 +1,18 @@
+# Python bytecode files
+__pycache__/
+*.py[cod]
+
+# IDE configurations
+.idea/
+.vscode/
+
+# Package distribution files
+*.egg-info/
+
+# Distribution directories
+dist/
+build/
+
 src/__init__.py
 *.pyc
 */__pycache__/
