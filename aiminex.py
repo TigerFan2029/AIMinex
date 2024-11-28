@@ -32,7 +32,7 @@ from aimgui.about import show_about
 from aimgui import color_change
 
 
-class MainApp(ctk.CTk):   
+class MainApp(ctk.CTk):        
     def __init__(self):
         super().__init__()
         self.title("AIMinex")
@@ -45,13 +45,14 @@ class MainApp(ctk.CTk):
             icon = tk.PhotoImage(file=icon_path)
             self.iconphoto(False, icon)
 
-        ctk.set_appearance_mode("Light")
+        ctk.set_appearance_mode("System")
         style = ttk.Style()
         style.theme_use("default")
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         
-        self.geometry(f"{screen_width}x{screen_height}")
+        self.geometry(f"{screen_width}x{screen_height}")        
+
         self.filtered_df = pd.DataFrame()
         self.box_frame_sub_visible = True
         self.create_widgets()
@@ -62,7 +63,8 @@ class MainApp(ctk.CTk):
         if not system_select_bg:
             system_select_bg = 'LightSkyBlue1'
         
-        self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')
+        self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')    
+    
 
     def toggle_box_frame_sub(self):
         if self.box_frame_sub_visible:
