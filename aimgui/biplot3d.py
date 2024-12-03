@@ -97,7 +97,8 @@ class class3d:
         self.checkbox1 = ctk.CTkCheckBox(self.box_frame_sub, text="Display Legend", variable=self.var1)
         self.checkbox1.pack(side="top", anchor="w", padx=5, pady=(3, 0))
 
-        # Listbox for multiselect options
+        # Listbox for eigenvectors
+        ctk.CTkLabel(self.box_frame_sub, text="Plot Eigenvectors:").pack(side="top", padx=5, pady=(10, 0))
         self.multiselect_3d = tk.Listbox(self.box_frame_sub, selectmode=tk.MULTIPLE)
         self.multiselect_3d.pack(side="top", padx=5, pady=5)
         for names in self.df.columns.tolist():
@@ -366,7 +367,7 @@ class class3d:
         ys = scale * self.loadings[pc2]
         zs = scale * self.loadings[pc3]
 
-        plt.title('3D Biplot')
+        plt.title(f"3d PCA Biplot")
 
         self.ax.set_xlabel(pc1)
         self.ax.set_ylabel(pc2)

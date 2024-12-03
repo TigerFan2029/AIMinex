@@ -1,16 +1,19 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="./">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Using Navigation Bar &#8212; AIMinex 1.0.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=8d563738"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Dependencies" href="dependencies.html" />
@@ -18,9 +21,8 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
-
   
-  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
   
@@ -33,40 +35,34 @@
           <div class="body" role="main">
             
   <section id="using-navigation-bar">
-<h1>Using Navigation Bar<a class="headerlink" href="#using-navigation-bar" title="Link to this heading">¶</a></h1>
+<h1>Using Navigation Bar<a class="headerlink" href="#using-navigation-bar" title="Permalink to this heading">¶</a></h1>
 <div class="line-block">
 <div class="line">The Navigation Bar is located at the top of each graph and comprises various functions, including saving graphs, zooming, and moving.</div>
 </div>
 <p>Note: The Navigation Bar used in this program is from <a class="reference external" href="https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/backends/_backend_tk.py">NavigationToolbar2Tk</a>.</p>
 <section id="features">
-<h2>Features:<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
+<h2>Features:<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
 <ol class="arabic">
 <li><p>Save Figure:</p>
 <p>This function saves a picture of the current plot in various formats depending on user selection.</p>
-<a class="reference internal image-reference" href="_images/nb1.png"><img alt="_images/nb1.png" src="_images/nb1.png" style="width: 100%;" />
-</a>
+<a class="reference internal image-reference" href="_images/nb1.png"><img alt="_images/nb1.png" src="_images/nb1.png" style="width: 100%;" /></a>
 </li>
 <li><p>Configure subplots:</p>
 <p>Creates a new tab with sliders for adjusting plot layout.</p>
-<a class="reference internal image-reference" href="_images/nb3.png"><img alt="_images/nb3.png" src="_images/nb3.png" style="width: 100%;" />
-</a>
-<a class="reference internal image-reference" href="_images/nb2.png"><img alt="_images/nb2.png" src="_images/nb2.png" style="width: 100%;" />
-</a>
+<a class="reference internal image-reference" href="_images/nb3.png"><img alt="_images/nb3.png" src="_images/nb3.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="_images/nb2.png"><img alt="_images/nb2.png" src="_images/nb2.png" style="width: 100%;" /></a>
 </li>
 <li><p>Zoom (Zoom to rectangle x/y fixes axis):</p>
 <p>When selected, allows the user to highlight areas of the plot to zoom in, click on the button again to exit select and use the back or home button to redo changes.</p>
-<a class="reference internal image-reference" href="_images/nb4.png"><img alt="_images/nb4.png" src="_images/nb4.png" style="width: 100%;" />
-</a>
+<a class="reference internal image-reference" href="_images/nb4.png"><img alt="_images/nb4.png" src="_images/nb4.png" style="width: 100%;" /></a>
 </li>
 <li><p>Move/drag button:</p>
 <p>Select to move perspective within the plot.</p>
-<a class="reference internal image-reference" href="_images/nb5.png"><img alt="_images/nb5.png" src="_images/nb5.png" style="width: 100%;" />
-</a>
+<a class="reference internal image-reference" href="_images/nb5.png"><img alt="_images/nb5.png" src="_images/nb5.png" style="width: 100%;" /></a>
 </li>
 <li><p>Redo, Undo, reset default:</p>
 <p>Back to the previous view(redo), Forward to the next view(undo), and Reset Original view(home button).</p>
-<a class="reference internal image-reference" href="_images/nb6.png"><img alt="_images/nb6.png" src="_images/nb6.png" style="width: 100%;" />
-</a>
+<a class="reference internal image-reference" href="_images/nb6.png"><img alt="_images/nb6.png" src="_images/nb6.png" style="width: 100%;" /></a>
 </li>
 </ol>
 </section>
@@ -120,7 +116,7 @@
   </ul></li>
 </ul>
 </div>
-<search id="searchbox" style="display: none" role="search">
+<div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -128,7 +124,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</search>
+</div>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -143,11 +139,11 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2024, Digital Earth Science and Engineering Lab.
+      &copy;2024, Digital Earth Science and Engineering Lab.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/Using_Navigation_Bar.rst.txt"

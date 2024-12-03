@@ -99,6 +99,7 @@ class class2d:
         self.checkbox1.pack(side="top", anchor="w", padx=5, pady=(3, 0))
 
         # Multiselect listbox for selecting columns
+        ctk.CTkLabel(self.box_frame_sub, text="Plot Eigenvectors:").pack(side="top", padx=5, pady=(10, 0))
         self.multiselect_2d = tk.Listbox(self.box_frame_sub, selectmode=tk.MULTIPLE)
         self.multiselect_2d.pack(side="top", padx=5, pady=5)
         for names in self.df.columns.tolist():
@@ -149,7 +150,8 @@ class class2d:
         
         fig = plt.figure(figsize=(10, 10))
         
-        # Create a subplot grid if 'filtered column' exists
+        # Subplot grid
+        fig.suptitle(f'2D PCA Biplot', fontsize=14)
         gs = fig.add_gridspec(5, 5, hspace=0.4, wspace=0.4)
         self.ax = fig.add_subplot(gs[1:5, 0:4])
         ax_box_x = fig.add_subplot(gs[0, 0:4], sharex=self.ax)
@@ -421,7 +423,7 @@ class class2d:
         
         self.ax.set_xlabel(pc1)
         self.ax.set_ylabel(pc2)
-        self.ax.set_title(f"{pc1} vs {pc2}")
+        #self.ax.set_title(f"{pc1} vs {pc2}")
         self.prev_xlim = self.ax.get_xlim()
         self.prev_ylim = self.ax.get_ylim()
         
