@@ -687,13 +687,8 @@ class MainApp(ctk.CTk):
     def perform_pca(self):
         # Perform PCA and update output
         try:
-            print (f"gamma {self.gamma}")
-            print (f"degree {self.degree}")
-            print (f"coef {self.coef}")
             self.pca_instance = PCA_class(self.df, self.scaler_combo, self.pca_type_combo, self.output_text, self.slider, self.kernel_combo, self.gamma, self.degree, self.coef)
-            print("1")
             self.pca_instance.get_variance_ratio()
-            print("2")
             self.output_text.insert("end", f"PCA performed successfully. Shape of transformed data: {self.pca_instance.x.shape}\n")
             color_change.color_function(self)
             color_change.shape_map(self)
