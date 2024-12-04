@@ -10,7 +10,7 @@ class SharedContainer:
         self.content_container.pack(fill='both', expand=True)
         self.tabs = []
         self.current_tab = None
-        self.tab_count = 0  # Initialize tab counter
+        self.tab_count = 0
 
         # Add a plus button for creating new tabs
         self.plus_button = ctk.CTkButton(self.tab_container, text="+", width=25, height=25, border_width=0, hover_color="darkgrey", text_color="black", fg_color="transparent", command=self.create_tab_button)
@@ -18,9 +18,9 @@ class SharedContainer:
 
     def create_tab(self, title="New Tab"):
         # Create a new tab with a title
-        self.tab_count += 1  # Increment tab counter
-        title = f"Layout {self.tab_count}"  # Generate title based on tab counter
-        tab_frame = tk.Frame(self.tab_container, bd=1, relief=tk.RAISED, height=30)  # Set height
+        self.tab_count += 1
+        title = f"Layout {self.tab_count}"
+        tab_frame = tk.Frame(self.tab_container, bd=1, relief=tk.RAISED, height=30)
         tab_label = ctk.CTkLabel(tab_frame, text=title)
         tab_label.bind("<Double-1>", lambda event: self.edit_tab_label(tab_label))
         custom_font = ctk.CTkFont(size=16)
@@ -53,7 +53,7 @@ class SharedContainer:
     
         for tab_frame, _ in self.tabs:
             tab_frame.config(width=tab_width)
-            tab_frame.pack_propagate(False)  # Prevent the frame from resizing to fit its content
+            tab_frame.pack_propagate(False)
 
 
     def create_tab_button(self):
@@ -109,3 +109,4 @@ class SharedContainer:
         tab_label.configure(text=new_text)
         entry.destroy()
         tab_label.pack(side=tk.LEFT, padx=3, pady=3)
+        self.tab_container.update_idletasks()
