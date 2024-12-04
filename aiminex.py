@@ -4,6 +4,7 @@ from tkinter import ttk, scrolledtext, Menu
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 from tkinter import PanedWindow
+from tkinter import messagebox
 
 import pandas as pd
 import numpy as np
@@ -87,7 +88,8 @@ class MainApp(ctk.CTk):
 
         y = self.winfo_height() // 2 - self.toggle_button.winfo_height() // 2
 
-        self.toggle_button.place(x=x, y=y)
+        self.toggle_button.place(x=x, y=y)        
+    
     
     def create_widgets(self):
         # Create a PanedWindow
@@ -181,7 +183,18 @@ class MainApp(ctk.CTk):
         self.editmenu = Menu(menubar, tearoff=0)
         self.editmenu.add_command(label="Edit Data Point Color/Shape", command=lambda: color_change.open_color_window(self), state="disabled")
 
-        menubar.add_cascade(label="Edit", menu=self.editmenu)
+        menubar.add_cascade(label="Edit", menu=self.editmenu)      
+        
+        # Add "Settings" option under the "Edit" menu, which opens the settings popup
+        # Initialize default appearance mode and color theme
+        self.current_appearance_mode = "system"  # Default is system
+        self.current_color_theme = "blue"  # Default theme is blue
+
+        # Set the appearance mode and color theme initially
+        ctk.set_appearance_mode(self.current_appearance_mode)
+        ctk.set_default_color_theme(self.current_color_theme)
+        
+        self.editmenu.add_command(label="Settings", command=self.open_settings)
 
         # Create help menu options
         helpmenu = Menu(menubar, tearoff=0)
@@ -202,9 +215,67 @@ class MainApp(ctk.CTk):
         style = ttk.Style()
         style.map('TCombobox', 
         fieldbackground=[('readonly', 'white')],
-        background=[('readonly', 'lightgrey')])
+        background=[('readonly', 'lightgrey')])            
+    
+    # Function to change appearance mode.
+    # We must include "self" in the argument even is it is not used in the statements inside.# Function to change appearance mode
+    def change_appearance_mode(self, mode):
+        self.current_appearance_mode = mode
+        ctk.set_appearance_mode(mode)
 
+    # Function to change color theme (default CustomTkinter themes)
+    def change_color_theme(self, theme):
+        self.current_color_theme = theme
+        ctk.set_default_color_theme(theme) 
+    
+    # Function to open the Settings popup
+    def open_settings(self):
+        # Create a new settings popup (top-level window)
+        settings_popup = ctk.CTkToplevel(self)
+        settings_popup.title("Settings")
 
+        # Set the size of the settings popup window
+        settings_popup.geometry("250x350")
+        settings_popup.attributes("-topmost", True)  # Ensure it stays on top
+
+        # Add Appearance Mode options
+        appearance_mode_label = ctk.CTkLabel(settings_popup, text="Appearance Mode:")
+        appearance_mode_label.pack(pady=10)
+
+        appearance_mode_var = tk.StringVar(value=self.current_appearance_mode)  # Set initial value
+
+        # Create Radio Buttons with the correct checked state
+        appearance_mode_system = ctk.CTkRadioButton(settings_popup, text="System", variable=appearance_mode_var, value="system", command=lambda: self.change_appearance_mode("system"))
+        appearance_mode_system.pack(pady=5)
+
+        appearance_mode_light = ctk.CTkRadioButton(settings_popup, text="Light", variable=appearance_mode_var, value="light", command=lambda: self.change_appearance_mode("light"))
+        appearance_mode_light.pack(pady=5)
+
+        appearance_mode_dark = ctk.CTkRadioButton(settings_popup, text="Dark", variable=appearance_mode_var, value="dark", command=lambda: self.change_appearance_mode("dark"))
+        appearance_mode_dark.pack(pady=5)
+
+        # Add Color Theme options
+        color_theme_label = ctk.CTkLabel(settings_popup, text="Color Theme:")
+        color_theme_label.pack(pady=10)
+
+        color_theme_var = tk.StringVar(value=self.current_color_theme)  # Set initial value
+
+        # Create Radio Buttons with the correct checked state
+        color_theme_blue = ctk.CTkRadioButton(settings_popup, text="Blue", variable=color_theme_var, value="blue", command=lambda: self.change_color_theme("blue"))
+        color_theme_blue.pack(pady=5)
+
+        color_theme_dark_blue = ctk.CTkRadioButton(settings_popup, text="Dark Blue", variable=color_theme_var, value="dark-blue", command=lambda: self.change_color_theme("dark-blue"))
+        color_theme_dark_blue.pack(pady=5)
+
+        color_theme_green = ctk.CTkRadioButton(settings_popup, text="Green", variable=color_theme_var, value="green", command=lambda: self.change_color_theme("green"))
+        color_theme_green.pack(pady=5)
+
+        # Close Button
+        close_button = ctk.CTkButton(settings_popup, text="Close", command=settings_popup.destroy)
+        close_button.pack(pady=20)
+
+        settings_popup.mainloop()               
+    
     def open_help_html(self):
         import urllib.parse
         # Open HTML help file
