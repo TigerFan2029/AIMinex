@@ -158,6 +158,7 @@ class drill_class:
             ax.set_title(f'PC{col + 1}')
 
         # Embed the plot in the Tkinter GUI
+        fig.suptitle(f'Drill-hole {self.drill_hole} Sample Depth Chart', fontsize=16)
         canvas = FigureCanvasTkAgg(fig, master=content_frame)
         canvas.draw()
         toolbar = NavigationToolbar2Tk(canvas, content_frame)
