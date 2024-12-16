@@ -1,5 +1,5 @@
 import unittest
-from aiminex.aiminex import main
+from aiminex import main
 from threading import Thread
 import time
 
