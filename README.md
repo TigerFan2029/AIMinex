@@ -7,3 +7,7 @@
 git clone --recursive https://github.com/DigitalEarthScience/AIMinex.git
 ## Development branch
 git clone --recursive --branch devel https://github.com/DigitalEarthScience/AIMinex.git
+
+# Install
+
+# Run

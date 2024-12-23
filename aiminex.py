@@ -4,7 +4,6 @@ from tkinter import ttk, scrolledtext, Menu
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 from tkinter import PanedWindow
-from tkinter import messagebox
 
 import pandas as pd
 import numpy as np

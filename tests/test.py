@@ -1,7 +1,13 @@
 import unittest
-from aiminex.aiminex import main
 from threading import Thread
 import time
+import sys
+import os
+
+# Add the parent directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from aiminex import main
 
 class TestMainGUI(unittest.TestCase):
     
