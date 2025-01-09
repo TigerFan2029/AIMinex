@@ -367,7 +367,7 @@ class class3d:
         ys = scale * self.loadings[pc2]
         zs = scale * self.loadings[pc3]
 
-        plt.title(f"3d PCA Biplot")
+        plt.title(f"3D PCA Biplot")
 
         self.ax.set_xlabel(pc1)
         self.ax.set_ylabel(pc2)
