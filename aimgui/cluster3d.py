@@ -59,7 +59,7 @@ class Cluster3DPlotClass:
         self.image_button.bind("<Button-1>", lambda event: self.on_button_click(self.image_button, self.plot_3d_cluster_sub0))
 
         # Add a tooltip to the label
-        ToolTip(self.image_button, msg="PCA 3D Biplot with Clusters")
+        ToolTip(self.image_button, msg="3D Element-Sample Cluster Plots")
 
     def plot_3d_cluster_sub0(self):
         # clear column cluster if exist
@@ -148,8 +148,9 @@ class Cluster3DPlotClass:
                     
         self.eps_text = ctk.CTkLabel(self.box_frame_sub, text="eps")
         self.min_sample_text = ctk.CTkLabel(self.box_frame_sub, text="min_sample")
-        
+
         self.plot_3d_cluster_sub(self.cluster_result)
+
         
     def plot_3d_cluster_sub(self, cluster):
         self.cluster_result = cluster
@@ -190,15 +191,15 @@ class Cluster3DPlotClass:
         else:
             pass
             
-            
         if self.cluster_result in ["DBSCAN", "Mean Shift", "Affinity Propagation"]:
             self.cluster_text.grid_forget()
             self.k_slider.grid_forget()
         else:
             self.cluster_text.grid(columnspan=2,row=14, column=0, pady=0, padx=5)
             self.k_slider.grid(columnspan=2,row=15, column=0, pady=(3,5), padx=5)
-        
+                
         self.pipenplot()
+        self.box_frame_sub.update_idletasks()
     
     def pipenplot(self, *arg):
         k = self.k_slider.get()
