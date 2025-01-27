@@ -4,6 +4,8 @@ from tkinter import ttk, scrolledtext, Menu
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 from tkinter import PanedWindow
+from tkinter import messagebox
+import darkdetect
 
 import pandas as pd
 import numpy as np
@@ -38,10 +40,10 @@ class MainApp(ctk.CTk):
         self.title("AIMinex")
         #setting icon        
         if platform.system() == 'Windows':            
-            icon_path = 'images/favicons/favicon.ico'  # Replace with your image path
+            icon_path = 'images/favicons/favicon.ico'
             self.iconbitmap(icon_path)
         else:            
-            icon_path = 'images/favicons/favicon.png'  # Replace with your image path
+            icon_path = 'images/favicons/favicon.png'
             icon = tk.PhotoImage(file=icon_path)
             self.iconphoto(False, icon)
 
@@ -56,15 +58,6 @@ class MainApp(ctk.CTk):
         self.filtered_df = pd.DataFrame()
         self.box_frame_sub_visible = True
         self.create_widgets()
-
-        # Set application color scheme
-        system_select_bg = self.option_get('selectBackground', '')
-
-        if not system_select_bg:
-            system_select_bg = 'LightSkyBlue1'
-        
-        self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')    
-    
 
     def toggle_box_frame_sub(self):
         if self.box_frame_sub_visible:
@@ -211,10 +204,10 @@ class MainApp(ctk.CTk):
         self.terminal = MATerminal(self.output_text, self)
 
         #make sure color matches during night
-        style = ttk.Style()
-        style.map('TCombobox', 
-        fieldbackground=[('readonly', 'white')],
-        background=[('readonly', 'lightgrey')])            
+        # style = ttk.Style()
+        # style.map('TCombobox', 
+        # fieldbackground=[('readonly', 'white')],
+        # background=[('readonly', 'lightgrey')])            
     
     # Function to change appearance mode.
     # We must include "self" in the argument even is it is not used in the statements inside.# Function to change appearance mode
@@ -222,11 +215,32 @@ class MainApp(ctk.CTk):
         self.current_appearance_mode = mode
         ctk.set_appearance_mode(mode)
 
+        # set default highlight color
+        system_select_bg = self.option_get('selectBackground', '')
+
+        if not system_select_bg:
+            system_select_bg = 'LightSkyBlue1'  
+
+        if self.current_appearance_mode == "system":
+            if darkdetect.isDark():
+                self.tk_setPalette(background='#2E2E2E', foreground='white', selectBackground='#476288', activeForeground='white')    
+
+            else:
+                self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')    
+
+
+        elif self.current_appearance_mode == "light":
+            self.tk_setPalette(background='white', foreground='black', selectBackground=system_select_bg, activeForeground='black')    
+
+        else:
+            self.tk_setPalette(background='#2E2E2E', foreground='white', selectBackground='#476288', activeForeground='white')    
+
+
     # Function to change color theme (default CustomTkinter themes)
     def change_color_theme(self, theme):
         self.current_color_theme = theme
         ctk.set_default_color_theme(theme) 
-    
+
     # Function to open the Settings popup
     def open_settings(self):
         # Create a new settings popup (top-level window)

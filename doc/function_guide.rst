@@ -84,15 +84,15 @@ b) Clustering Function
         .. image:: ../images/doc/samcbg.png
             :width: 100%  
 
-  3. Cluster 3D Biplot
+  3. 3D Element-Sample Cluster Plots
         | The Cluster3DPlotClass is designed to create and display 3D cluster plots based on selected axes and clustering algorithms. The class provides functionalities for customizing the plot, such as displaying shapes and colouring by clusters, and includes an interactive feature to show annotations on data points. 
 
         .. image:: ../images/doc/3dc.png
             :width: 100%  
 
-  4. Cluster 2D biplot
-        | This class plots a 2D clusterin plot which allows users to select different elements as the axes, apply different clustering algorithms, and visualize the results using meshgrids for background contours.
-
+  4. 2D Element-Sample Cluster Plots
+        | This class plots a 2D cluster plot that allows users to select different elements as axes, apply different clustering algorithms, and visualize the results using mesh grids for background contours.
+        
         .. image:: ../images/doc/2dc.png
             :width: 100%  
 

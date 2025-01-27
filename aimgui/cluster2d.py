@@ -67,7 +67,7 @@ class Cluster2DPlotClass:
         
         self.image_button.bind("<Button-1>", lambda event: self.on_button_click(self.image_button, self.plot_2d_cluster_sub0))
 
-        ToolTip(self.image_button, msg="PCA 2D Biplot with Clusters")
+        ToolTip(self.image_button, msg="2D Element-Sample Cluster Plots")
 
     def plot_2d_cluster_sub0(self):
         # clear column cluster if exist
@@ -185,6 +185,8 @@ class Cluster2DPlotClass:
             self.k_slider.grid(columnspan=2, row=12, column=0, pady=(3,0), padx=5)
         
         self.pipenplot()
+        self.box_frame_sub.update_idletasks()
+
 
     def pipenplot(self, *arg):
         k = self.k_slider.get()

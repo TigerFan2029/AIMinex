@@ -146,7 +146,8 @@ class loading_cluster:
             self.k_slider.grid(columnspan=2,row=5, column=0, pady=(3,5), padx=5)
 
         self.pipenplot()
-
+        self.box_frame_sub.update_idletasks()
+        
 
     def pipenplot(self, *arg):
         for widget in self.legend_frame.winfo_children():
