@@ -16,14 +16,14 @@ Or, you can simply click the "Code" dropdown list on the right and click "Downlo
 ![image](https://github.com/user-attachments/assets/a29a5ab3-d436-4a3e-8721-aa4188585249)
 
 # Install
-_Note: If you want to run directly from the source, you don't need to install the package. Make sure that all the dependencies are avalable._
+_Note: If you want to run directly from the source, you don't need to install the package. Make sure that all the dependencies are available._
 
 Go to AIMinex/ folder. In the terminal, type and enter:
 ```
 pip install .
 ```
 
-This will also install all required dependecies if missing.
+This will also install all required dependencies if missing.
 
 # Run
 
