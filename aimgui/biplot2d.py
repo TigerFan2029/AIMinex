@@ -479,7 +479,7 @@ class class2d:
         options = self.df.columns.tolist()
         for i in range(len(options[:])):
             if options[i] in self.selected_items:
-                namelist_2d[i].set_visible(True)
+                namelist_2d[i].set_visible(False)
                 self.arrow_list_2d[i].set_visible(True)
             else:
                 namelist_2d[i].set_visible(False)
