@@ -1,12 +1,12 @@
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from . import color_change
 from .custom_toolbar import CustomToolbar
 from matplotlib.lines import Line2D
 
 def legend(self):
     # Create and display legends for lithology and rock type
+    from . import color_change
     Legend = self.var1.get() == 1
     if Legend:
         for widget in self.legend_frame.winfo_children():
@@ -24,7 +24,7 @@ def legend(self):
             #print (f"color_map{color_change.color_map}")
             for lithology in unique_lithologies:
                 color = color_change.color_map[lithology.title()]
-                l1 = Line2D([], [], color=color, marker='o', linestyle='None', label=lithology)
+                l1 = Line2D([], [], color=color, marker='o', linestyle='None', markeredgewidth=1.5, label=lithology)
                 handle1.append(l1)
                 label1.append(lithology.title())
     
@@ -35,7 +35,7 @@ def legend(self):
             for shape in unique_shapes:
                 str(shape).strip().lower()
                 marker = color_change.color_map1[shape]
-                l2 = Line2D([], [], color='black', marker=marker, linestyle='None', label=shape)
+                l2 = Line2D([], [], color='black', marker=marker, linestyle='None', markeredgewidth=1.5, label=shape)
                 handle2.append(l2)
                 label2.append(shape.title())
     
