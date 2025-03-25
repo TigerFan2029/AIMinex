@@ -804,52 +804,59 @@ class MainApp(ctk.CTk):
                 pass
 
     def loading_graph(self):
-        # preparing data
+        #preparing data
         self.loading()
         self.pca_df_scaled = self.pca_instance.pca_df_scaled
         self.pca_df_scaled.reset_index(drop=True, inplace=True)
-
         self.df.reset_index(drop=True, inplace=True)
         self.cleaned_df.reset_index(drop=True, inplace=True)
         self.df_c.reset_index(drop=True, inplace=True)
 
         # Initiate modules
         self.selection()
-        loading_class(self.loadings, self.shared_container, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-        class3d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
-        class2d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button, self.legend_frame, self.loadings, self.selected_column)
-        supervised_learning(self.df, self.cleaned_df, self.on_button_click, self.apply_button, self.box_frame)
-                
+        loading_class(self.loadings, self.shared_container, self.box_frame, self.box_frame_sub, 
+                    self.on_button_click, self.apply_button)
+        class3d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, 
+                self.box_frame, self.box_frame_sub, self.on_button_click, 
+                self.apply_button, self.legend_frame, self.loadings, self.selected_column)
+        class2d(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, 
+                self.box_frame, self.box_frame_sub, self.on_button_click, 
+                self.apply_button, self.legend_frame, self.loadings, self.selected_column)
+        supervised_learning(self.df, self.cleaned_df, self.on_button_click, 
+                        self.apply_button, self.box_frame)
+        
+        image_path = 'images/icons/blank.png'
+        pil_image = Image.open(image_path)
+        self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
+
         if "sample id" in self.cleaned_df.columns:
-            sample_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
+            sample_class(self.shared_container, self.pca_df_scaled, self.df, self.cleaned_df,
+                        self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
         else:
-            print("Column Sample ID not in data frame, sample bar graph, and sample cluster bar graph not avaliable")
-            
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            image_path = os.path.join(script_dir, "images", "images_program", "blank.png")
-            pil_image = Image.open(image_path)
-            self.icon_image = CTkImage(light_image=pil_image, dark_image=pil_image, size=(32, 32))
-    
+            print("Column Sample ID not in data frame, sample bar graph, and sample cluster bar graph not available") 
             blank_image_ = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
             blank_image_1 = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
             blank_image_.grid(row=3, column=1, sticky="w", pady=0, padx=5)
             blank_image_1.grid(row=1, column=1, sticky="w", pady=0, padx=5)
 
         try:
-            column_name = self.cleaned_df.filter(like='depth').columns[0]
-        except:
-            print("Column 'Depth' not in data frame, drill hole plot not avaliable")
-
-        if "drillhole" in self.cleaned_df.columns and column_name in self.cleaned_df.columns:
-            drill_class(self.shared_container, self.pca_df_scaled, self.cleaned_df, self.df, self.box_frame, self.box_frame_sub, self.on_button_click, self.apply_button)
-        else:
-            if "drillhole" in self.cleaned_df.columns:
-                pass
+            depth_cols = self.cleaned_df.filter(like='depth').columns
+            column_name = depth_cols[0]
+            if "drillhole" in self.cleaned_df.columns and column_name in self.cleaned_df.columns:
+                try:
+                    drill_class(self.shared_container, self.pca_df_scaled, self.cleaned_df, 
+                                self.df, self.box_frame, self.box_frame_sub, 
+                                self.on_button_click, self.apply_button)
+                except Exception as e:
+                    print("DEBUG: drill_class threw an exception:", e)
             else:
-                print("Column 'Drillhole' not in data frame, drill hole plot not avaliable")
+                if "drillhole" not in self.cleaned_df.columns:
+                    print("Column 'Drillhole' not in data frame, drill hole plot not available")
+        except IndexError:
+            print("Column 'Depth' not in data frame, drill hole plot not available")
             blank_image_2 = ctk.CTkLabel(self.box_frame, image=self.icon_image, text = "", width=20)
             blank_image_2.grid(row=1, column=4, sticky="w", pady=0, padx=5)
-            
+
         self.save_pc_menu.entryconfig("Save PC by element excel", state=tk.NORMAL)
         if "sample id" in self.cleaned_df.columns:
             self.save_pc_menu.entryconfig("Save PC by sample excel", state=tk.NORMAL)
