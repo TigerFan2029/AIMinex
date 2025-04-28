@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import ttk, scrolledtext, Menu
+from tkinter import ttk, scrolledtext, Menu, font as tkfont
 from tkinter import filedialog as fd
 from customtkinter import CTkImage
 from tkinter import PanedWindow
@@ -58,6 +58,8 @@ class MainApp(ctk.CTk):
         self.filtered_df = pd.DataFrame()
         self.box_frame_sub_visible = True
         self.create_widgets()
+        self.data_columns = None
+        self.group_column = None
 
     def toggle_box_frame_sub(self):
         if self.box_frame_sub_visible:
@@ -210,7 +212,6 @@ class MainApp(ctk.CTk):
         # background=[('readonly', 'lightgrey')])            
     
     # Function to change appearance mode.
-    # We must include "self" in the argument even is it is not used in the statements inside.# Function to change appearance mode
     def change_appearance_mode(self, mode):
         self.current_appearance_mode = mode
         ctk.set_appearance_mode(mode)
@@ -306,7 +307,6 @@ class MainApp(ctk.CTk):
         except Exception as e:
             print(f"Error opening HTML file: {e}")
 
-
     def load_data(self):
         # Load data from selected file
         try:
@@ -345,11 +345,176 @@ class MainApp(ctk.CTk):
         except Exception as e:
             self.output_text.insert("end", f"Error loading sheet: {str(e)}\n")
         
-        self.process_sheet()
+        self.open_column_selector()
+        
+    def open_column_selector(self):
+        popup = ctk.CTkToplevel(self)
+        popup.title("Select Data Columns")
+        popup.geometry("950x450")
+        popup.attributes("-topmost", True)
+        popup.rowconfigure(2, weight=1)
+        popup.columnconfigure(0, weight=1)
+
+        #scrollbar
+        xscroll = tk.Scrollbar(popup, orient="horizontal")
+        xscroll.grid(row=3, column=0, columnspan=4, sticky="ew")
+
+        #checkboxes
+        hdr_canvas = tk.Canvas(popup, height=40, highlightthickness=0,
+                            xscrollcommand=xscroll.set)
+        hdr_canvas.grid(row=0, column=0, columnspan=4,
+                        sticky="ew", padx=10, pady=(10,0))
+        hdr_inner = tk.Frame(hdr_canvas)
+        hdr_canvas.create_window((0,0), window=hdr_inner, anchor="nw")
+        def _on_hdr_config(e):
+            hdr_canvas.configure(scrollregion=hdr_canvas.bbox("all"))
+        hdr_inner.bind("<Configure>", _on_hdr_config)
+
+        #Treeview to measure column widths
+        cols = list(self.df_0.columns)
+        tree = ttk.Treeview(popup, columns=cols, show="headings", height=12,
+                            selectmode="none")
+        for col in cols:
+            tree.heading(col, text=col, anchor="w")
+            tree.column(col, anchor="w", width=90)
+        for idx, row in self.df_0.head(300).iterrows():
+            tree.insert("", "end", iid=str(idx), values=list(row))
+
+        #Create & align checkboxes
+        font = tkfont.Font()
+        check_vars = {}
+        for i, col in enumerate(cols):
+            # ellipsize label
+            w = tree.column(col)["width"]
+            label = col
+            if font.measure(label) > w:
+                lo, hi = 0, len(label)
+                while lo < hi:
+                    mid = (lo+hi)//2
+                    if font.measure(label[:mid]+"...") <= w:
+                        lo = mid+1
+                    else:
+                        hi = mid
+                label = label[:lo-1] + "..."
+            var = tk.BooleanVar(value=False)
+            cb  = tk.Checkbutton(hdr_inner, text=label, variable=var)
+            cb.grid(row=0, column=i, sticky="w", padx=(2,0))
+            hdr_inner.grid_columnconfigure(i, minsize=w)
+            check_vars[i] = var
+
+        #Auto-select pct/ppm on first open, else restore last choices
+        if not self.data_columns:
+            for i, col in enumerate(cols):
+                if 'pct' in col.lower() or 'ppm' in col.lower():
+                    check_vars[i].set(True)
+        else:
+            prev = set(self.data_columns)
+            for i, col in enumerate(cols):
+                if col in prev:
+                    check_vars[i].set(True)
+
+        #selection
+        hdr_inner.bind_class("Checkbutton", "<B1-Motion>",
+                            lambda e: e.widget.invoke())
+        ctk.CTkButton(popup, text="Select All", width=90,
+                    command=lambda: [v.set(True) for v in check_vars.values()])\
+            .grid(row=1, column=0, sticky="w", padx=(10,0), pady=6)
+        ctk.CTkButton(popup, text="Clear All", width=90,
+                    command=lambda: [v.set(False) for v in check_vars.values()])\
+            .grid(row=1, column=0, sticky="w", padx=(110,0), pady=6)
+
+        #Sync scrolling
+        def safe(x, *a):
+            try: x(*a)
+            except tk.TclError: pass
+
+        def scroll_both(*a):
+            safe(hdr_canvas.xview, *a)
+            safe(tree.xview, *a)
+        xscroll.config(command=scroll_both)
+
+        def on_tree_x(f, l):
+            safe(hdr_canvas.xview, "moveto", f)
+            xscroll.set(f, l)
+        tree.configure(xscrollcommand=on_tree_x)
+
+        tree.grid(row=2, column=0, columnspan=4,
+                sticky="nsew", padx=10, pady=5)
+
+        #Cell highlight
+        tree.tag_configure("cellsel", background="lightblue")
+        def on_cell_click(evt):
+            for itm in tree.get_children():
+                vals = tree.item(itm, "values")
+                clean = [str(v).strip("[]") for v in vals]
+                tree.item(itm, values=clean, tags=[])
+
+            r, c = tree.identify_row(evt.y), tree.identify_column(evt.x)
+            if not (r and c): return
+            vals = tree.item(r, "values")
+            ci   = int(c.lstrip("#")) - 1
+            new  = [f"[{v}]" if i==ci else v
+                    for i, v in enumerate(vals)]
+            tree.item(r, values=new, tags=("cellsel",))
+        tree.bind("<Button-1>", on_cell_click)
+
+        #Select Similar
+        last = {}
+        ctx  = tk.Menu(popup, tearoff=0)
+        ctx.add_command(label="Select Similar", command=lambda: select_similar())
+        def on_rc(evt):
+            last['x'], last['y'] = evt.x, evt.y
+            ctx.tk_popup(evt.x_root, evt.y_root)
+        tree.bind("<Button-3>", on_rc)
+        tree.bind("<Button-2>", on_rc)
+        def select_similar():
+            if 'x' not in last:
+                messagebox.showinfo("No cell clicked",
+                                    "Right-click on a data cell first.")
+                return
+            r = tree.identify_row(last['y'])
+            c = tree.identify_column(last['x'])
+            if not (r and c):
+                messagebox.showinfo("Invalid click",
+                                    "Right-click must be on a data cell.")
+                return
+            ri, ci = int(r), int(c.lstrip("#"))-1
+            txt = str(self.df_0.iat[ri,ci]).strip()
+            if not txt:
+                messagebox.showinfo("Empty cell", "That cell is empty.")
+                return
+            matches = [i for i in range(len(cols))
+                    if txt in str(self.df_0.iat[ri,i])]
+            if not matches:
+                messagebox.showinfo("No matches",
+                    f"No other cells in row {ri+1} contain “{txt}.”")
+                return
+            for i in matches:
+                check_vars[i].set(True)
+
+        #Confirm & store choices
+        def _confirm():
+            chosen = [i for i,v in check_vars.items() if v.get()]
+            if not chosen:
+                messagebox.showwarning(
+                    "No data columns", "Tick at least one column above."
+                )
+                return
+            self.data_columns = [cols[i] for i in chosen]
+            popup.destroy()
+            self.process_sheet()
+
+        ctk.CTkButton(popup, text="Confirm", command=_confirm)\
+            .grid(row=1, column=3, sticky="e", padx=10, pady=6)
+
 
     def process_sheet(self):
         # Create widgets to select scaler/pca type, and column to use to filter data. 
-        valid_columns = [col for col in self.df_0.columns if '_ppm' not in col and '_pct' not in col] #["None(include ALL)"]+
+        if self.group_column:
+            valid_columns = [self.group_column]
+        else:
+            valid_columns = [col for col in self.df_0.columns 
+                            if '_ppm' not in col and '_pct' not in col]
 
         self.scaler_combo = ctk.CTkComboBox(self.selection_frame, values=["Standard Scaler", "Logarithmic Scaler"], state="readonly")
         self.scaler_combo.set("Standard Scaler")
@@ -359,9 +524,11 @@ class MainApp(ctk.CTk):
         self.slider.set(6)
 
         if valid_columns:
-            ctk.CTkLabel(self.selection_frame, text="Filter by:").grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=(5,0))
+            self.select_data_btn = ctk.CTkButton(self.selection_frame, text="Select Data Columns…", command=self.open_column_selector)
+            self.select_data_btn.grid(row=0, column=0, columnspan=4, pady=(5,0), padx=5)
+            ctk.CTkLabel(self.selection_frame, text="Filter by:").grid(row=1, column=0, columnspan=2, sticky="w", padx=5, pady=(5,0))
             self.selected_column_combobox = ctk.CTkComboBox(self.selection_frame, values=valid_columns, state="readonly", command = self.update_listbox)
-            self.selected_column_combobox.grid(row=0, column=2, columnspan=2, sticky="we", padx=5, pady=(5,0))
+            self.selected_column_combobox.grid(row=1, column=2, columnspan=2, sticky="we", padx=5, pady=(5,0))
             self.selected_column_combobox.set(valid_columns[0])
 
         else:
@@ -397,7 +564,7 @@ class MainApp(ctk.CTk):
 
     def create_lithobuttons(self):
         # Create lithology selection buttons
-        self.lithology_listbox.grid(row=1, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
+        self.lithology_listbox.grid(row=2, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
         
         # Select all
         def select_all():
@@ -419,15 +586,15 @@ class MainApp(ctk.CTk):
         # Pack PCA and scaling options widgets
         self.current_button = None
         
-        self.scaler_combo.grid(row=2, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
+        self.scaler_combo.grid(row=3, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
   
-        self.pca_type_combo.grid(row=3, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
+        self.pca_type_combo.grid(row=4, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
 
-        ctk.CTkLabel(self.selection_frame, text="Number of PCA Components:").grid(row=8, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
+        ctk.CTkLabel(self.selection_frame, text="Number of PCA Components:").grid(row=9, column=0, columnspan=4, sticky="we", padx=5, pady=(5,0))
 
-        self.slider.grid(row=9, column=0, columnspan=4, padx=10, pady=0)
+        self.slider.grid(row=10, column=0, columnspan=4, padx=10, pady=0)
         self.label = ctk.CTkLabel(self.selection_frame, text=f"Current value: {int(self.slider.get())}")
-        self.label.grid(row=10, column=0, columnspan=4, padx=5, pady=0)
+        self.label.grid(row=11, column=0, columnspan=4, padx=5, pady=0)
 
         # initiate widgets for kernal parameters
         self.gamma_slider = ctk.CTkSlider(self.selection_frame, from_=0, to=1, width=100, command=self.gamma_change)
@@ -439,7 +606,9 @@ class MainApp(ctk.CTk):
         self.label3 = ctk.CTkLabel(self.selection_frame, text=f"Coef: {self.coef_slider.get():.2f}")
 
         # set defaults and configure
-        filtered_columns = [col for col in self.df_0.columns if '_ppm' in col or '_pct' in col]
+        filtered_columns = self.data_columns
+        #filtered_columns = [col for col in self.df_0.columns if '_ppm' in col or '_pct' in col]
+        
         num_filtered_features = len(filtered_columns)
         
         self.gamma_slider.set(1/num_filtered_features)
@@ -460,7 +629,7 @@ class MainApp(ctk.CTk):
         self.kernel_combo.set("linear")
 
         self.apply_button = ctk.CTkButton(self.selection_frame, text="Apply", command= self.filter_dataframe)
-        self.apply_button.grid(row=11, column=0, columnspan=4, padx=5, pady=(0,5))
+        self.apply_button.grid(row=12, column=0, columnspan=4, padx=5, pady=(0,5))
 
         self.kernel_param()
 
@@ -479,25 +648,25 @@ class MainApp(ctk.CTk):
             pass
 
         if self.kernel == "rbf":
-            self.gamma_slider.grid(row=5, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label1.grid(row=5, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.gamma_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label1.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
 
         elif self.kernel == "poly":
-            self.gamma_slider.grid(row=5, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label1.grid(row=5, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.gamma_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label1.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
             
-            self.degree_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label2.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.degree_slider.grid(row=7, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label2.grid(row=7, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
 
-            self.coef_slider.grid(row=7, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label3.grid(row=7, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.coef_slider.grid(row=8, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label3.grid(row=8, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
 
         elif self.kernel == "sigmoid":
-            self.gamma_slider.grid(row=5, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label1.grid(row=5, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.gamma_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label1.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
             
-            self.coef_slider.grid(row=6, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
-            self.label3.grid(row=6, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
+            self.coef_slider.grid(row=7, column=1, columnspan=3, sticky="e", padx=(10,0), pady=0)
+            self.label3.grid(row=7, column=0, sticky="w", columnspan=2, padx=(10,0), pady=0)
 
         else:
             pass
@@ -506,8 +675,8 @@ class MainApp(ctk.CTk):
         # Show kernel options if Kernel PCA is selected
         pca_type = self.pca_type_combo.get()
         if pca_type == "Kernel PCA":
-            self.kernel_combo.grid(row=4, column=1, columnspan=3, sticky="we", padx=5, pady=(5,0))
-            self.kernel_text.grid(row=4, column=0, sticky="w", padx=(10,0), pady=(5,0))
+            self.kernel_combo.grid(row=5, column=1, columnspan=3, sticky="we", padx=5, pady=(5,0))
+            self.kernel_text.grid(row=5, column=0, sticky="w", padx=(10,0), pady=(5,0))
             self.kernel_param()
         else:
             self.kernel_combo.grid_forget()
@@ -607,16 +776,16 @@ class MainApp(ctk.CTk):
             else:
                 self.pca_label = ctk.CTkLabel(self.selection_frame, text= f"Kernel PCA-{self.kernel}", font=("Arial", 12)) 
                 
-        self.pca_label.grid(row=13, column=0, columnspan=4, pady=(0,5))
+        self.pca_label.grid(row=14, column=0, columnspan=4, pady=(0,5))
             
         if self.scaler_combo.get() == "Select PCA Scaler:":
             self.scaler_label = ctk.CTkLabel(self.selection_frame, text="Select a Scaler", font=("Arial", 12))
-            self.scaler_label.grid(row=12, column=0, columnspan=4, padx=5, pady=0)
+            self.scaler_label.grid(row=13, column=0, columnspan=4, padx=5, pady=0)
             return
         else:
             # self.scaler_label.grid_forget()
             self.scaler_label = ctk.CTkLabel(self.selection_frame, text= f"Selected scaler: {self.scaler_combo.get()}", font=("Arial", 12))
-            self.scaler_label.grid(row=12, column=0, columnspan=4, padx=5, pady=0)
+            self.scaler_label.grid(row=13, column=0, columnspan=4, padx=5, pady=0)
    
         self.clear()
         self.current_button = None
@@ -658,12 +827,15 @@ class MainApp(ctk.CTk):
 
             if not selected_indices:
                 self.lithologies_label = ctk.CTkLabel(self.selection_frame, text="No lithology selected:(", font=("Arial", 12))
-                self.lithologies_label.grid(row=14, column=0, columnspan=4, padx=5, pady=(0,5))                   
+                self.lithologies_label.grid(row=15, column=0, columnspan=4, padx=5, pady=(0,5))                   
         except:
             self.filtered_df = self.df_0
 
         # Cleaning Data Frame to contain only the data/elements
-        filtered_columns = [col for col in self.filtered_df.columns if '_ppm' in col or '_pct' in col]
+        filtered_columns = self.data_columns
+        # filtered_columns = self.data_columns if self.data_columns is not None else [
+        #     col for col in self.filtered_df.columns if '_ppm' in col or '_pct' in col
+        # ]
 
         df_filtered = self.filtered_df.replace('<', '', regex=True)
         df_filtered[filtered_columns] = df_filtered[filtered_columns].apply(pd.to_numeric, errors='coerce')
